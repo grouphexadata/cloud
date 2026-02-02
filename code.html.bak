@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Perfil de Experto - Ariel Nájera Hernández</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3b82f6", "primary-glow": "#60a5fa", "accent": "#f97316", "background-light": "#f8f6f5",
+                        "background-dark": "#0d1117", "glass-surface": "rgba(30, 41, 59, 0.4)", "glass-border": "rgba(96, 165, 250, 0.2)", "glass-highlight": "rgba(59, 130, 246, 0.15)",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px" },
+                    backgroundImage: {
+                        'neural-pattern': "url('https://images.unsplash.com/photo-1544256335-af3323ebd08f?q=80&w=2669&auto=format&fit=crop')",
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    },
+                    boxShadow: {
+                        'neon': '0 0 20px -5px rgba(59, 130, 246, 0.6)', 'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.5)',
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(59, 130, 246, 0.05);
+        }
+
+        .glass-panel-light {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glow-hover:hover {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3), inset 0 0 10px rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.6);
+        }
+
+        .icon-ignite:hover .material-symbols-outlined {
+            color: #f97316 !important;
+            text-shadow: 0 0 15px rgba(249, 115, 22, 0.8);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white">
+    <div class="fixed inset-0 z-0 pointer-events-none opacity-20 bg-cover bg-center mix-blend-overlay"
+        data-alt="Dark abstract neural network connections background"
+        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuACVwOPx2gwLfBh0lRuvJNMwkP5fbfQbh3Unt5XT7_yOVRdiXyD2W6wNQu3Mw0htxHSL5DufVXJEjJvIS8iyIfGvYu8d0fyBiyB8FSaBxi2PX-z0MZ344sw-qgk5RqNH6lUNUec6ie3p4J_Wb3JvjvsdiRRge4KXSNhkbBwbdnebWbBNIB8hNAI8zqmtKsYLJF5Tt9O7DrZxQTYgNv4VB4lEObM0vZxDppOEUblsXkJU60i1wcach0GuokR6oht8dXhKmXnsZsJOOMN'); filter: hue-rotate(200deg) contrast(1.2);">
+    </div>
+    <div
+        class="fixed inset-0 z-0 pointer-events-none bg-gradient-radial from-blue-900/10 via-background-dark/90 to-background-dark">
+    </div>
+    <div class="relative z-10 flex flex-col h-full grow">
+        <header class="glass-panel sticky top-0 z-50 w-full border-b border-glass-border">
+            <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <div class="flex items-center gap-3">
+                        <div class="text-primary p-2 bg-primary/10 rounded-lg border border-primary/20">
+                            <span class="material-symbols-outlined !text-[28px] text-primary-glow">hexagon</span>
+                        </div>
+                        <h2 class="text-white text-xl font-bold tracking-tight drop-shadow-lg">HEXADATA <span
+                                class="text-primary-glow font-light">CLOUD</span></h2>
+                    </div>
+                    <nav class="hidden md:flex items-center gap-10">
+                        <a class="text-slate-400 hover:text-white text-sm font-medium transition-colors hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+                            href="#">Inicio</a>
+                        <a class="text-white text-sm font-medium border-b-2 border-primary pb-1 shadow-[0_4px_10px_-2px_rgba(59,130,246,0.5)]"
+                            href="#">Expertos</a>
+                        <a class="text-slate-400 hover:text-white text-sm font-medium transition-colors hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+                            href="#">Soluciones</a>
+                        <a class="text-slate-400 hover:text-white text-sm font-medium transition-colors hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+                            href="#">Insights</a>
+                    </nav>
+                    <div class="flex items-center gap-3">
+                        <button
+                            class="flex items-center justify-center rounded-lg h-9 px-3 bg-white/5 hover:bg-white/10 text-white text-xs font-bold border border-white/10 transition-all">
+                            ES / EN
+                        </button>
+                        <button
+                            class="flex items-center justify-center rounded-lg h-9 px-3 bg-primary hover:bg-primary/90 text-white shadow-neon transition-all border border-primary-glow/50">
+                            <span class="material-symbols-outlined !text-[20px]">light_mode</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main class="flex-1 w-full max-w-[1400px] mx-auto px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full">
+                <aside class="lg:col-span-4 xl:col-span-3 flex flex-col gap-6">
+                    <div
+                        class="glass-panel rounded-2xl p-6 lg:p-8 flex flex-col items-center text-center relative overflow-hidden group">
+                        <div
+                            class="absolute top-10 left-1/2 -translate-x-1/2 w-48 h-48 bg-primary/20 blur-[60px] rounded-full pointer-events-none">
+                        </div>
+                        <div class="relative mb-6">
+                            <div
+                                class="w-40 h-40 rounded-full p-1 bg-gradient-to-br from-primary via-blue-400 to-transparent shadow-[0_0_30px_rgba(59,130,246,0.3)]">
+                                <img alt="Professional headshot of Ariel Nájera Hernández"
+                                    class="w-full h-full object-cover rounded-full border-4 border-[#0f172a]"
+                                    data-alt="Professional headshot of a man in business casual attire smiling"
+                                    src="profile.jpg" />
+                            </div>
+                            <div class="absolute bottom-1 right-2 bg-background-dark rounded-full p-1.5 border border-primary/30 shadow-lg flex items-center justify-center"
+                                title="Experto Verificado">
+                                <span
+                                    class="material-symbols-outlined text-primary-glow !text-[20px] drop-shadow-md">verified</span>
+                            </div>
+                        </div>
+                        <h1 class="text-2xl font-bold text-white mb-1 leading-tight tracking-tight">Ariel Nájera
+                            Hernández</h1>
+                        <p
+                            class="text-primary-glow font-medium text-xs sm:text-sm mb-4 tracking-wide uppercase drop-shadow-sm">
+                            Dirección Medios de Pago Adquirente</p>
+                        <div
+                            class="flex items-center gap-2 bg-primary/10 border border-primary/30 px-3 py-1.5 rounded-full mb-6 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+                            <div
+                                class="w-2 h-2 rounded-full bg-primary-glow animate-pulse shadow-[0_0_8px_rgba(96,165,250,0.8)]">
+                            </div>
+                            <span class="text-xs font-bold text-primary-glow tracking-wide">EXPERTO VERIFICADO</span>
+                        </div>
+                        <p
+                            class="text-slate-300 text-sm font-body leading-relaxed mb-8 border-t border-b border-white/5 py-4">
+                            Ejecutivo experto en ecosistemas de pagos digitales con más de 15 años liderando la
+                            innovación en adquirencia, procesamiento transaccional seguro y liquidación financiera.
+                        </p>
+                        <div class="w-full space-y-3">
+                            <button
+                                class="w-full h-12 bg-primary hover:bg-blue-600 text-white rounded-xl font-bold shadow-neon transition-all duration-300 flex items-center justify-center gap-2 group/btn border border-primary-glow/30">
+                                <span>Contactar Consultor</span>
+                                <span
+                                    class="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+                            </button>
+                            <button
+                                class="w-full h-12 bg-transparent hover:bg-white/5 text-white border border-glass-border hover:border-primary/50 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group/cv">
+                                <span
+                                    class="material-symbols-outlined group-hover/cv:text-primary-glow transition-colors">download</span>
+                                <span>Descargar CV</span>
+                            </button>
+                        </div>
+                        <div class="flex gap-4 mt-8 w-full justify-center">
+                            <a class="text-slate-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"
+                                href="#"><span class="material-symbols-outlined">mail</span></a>
+                            <a class="text-slate-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"
+                                href="#"><span class="material-symbols-outlined">language</span></a>
+                            <a class="text-slate-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"
+                                href="#"><span class="material-symbols-outlined">share</span></a>
+                        </div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6 grid grid-cols-2 gap-4">
+                        <div class="text-center group">
+                            <div class="text-2xl font-bold text-white group-hover:text-primary-glow transition-colors">
+                                15+</div>
+                            <div class="text-xs text-slate-400 font-body mt-1">Años Exp.</div>
+                        </div>
+                        <div class="text-center border-l border-white/10 group">
+                            <div class="text-2xl font-bold text-white group-hover:text-primary-glow transition-colors">
+                                85+</div>
+                            <div class="text-xs text-slate-400 font-body mt-1">Integraciones</div>
+                        </div>
+                        <div class="text-center border-t border-white/10 pt-4 group">
+                            <div class="text-2xl font-bold text-white group-hover:text-primary-glow transition-colors">
+                                $5B</div>
+                            <div class="text-xs text-slate-400 font-body mt-1">TPV Gestionado</div>
+                        </div>
+                        <div class="text-center border-t border-l border-white/10 pt-4 group">
+                            <div class="text-2xl font-bold text-white group-hover:text-primary-glow transition-colors">
+                                99.9%</div>
+                            <div class="text-xs text-slate-400 font-body mt-1">Uptime</div>
+                        </div>
+                    </div>
+                </aside>
+                <div class="lg:col-span-8 xl:col-span-9 flex flex-col gap-8">
+                    <section>
+                        <div class="flex items-center justify-between mb-6 px-2">
+                            <h3 class="text-white text-2xl font-bold flex items-center gap-3">
+                                <span
+                                    class="w-1.5 h-6 bg-gradient-to-b from-primary to-blue-600 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.8)]"></span>
+                                Especialidades
+                            </h3>
+                            <span
+                                class="text-xs text-primary-glow font-mono uppercase tracking-widest border border-primary/30 bg-primary/5 px-2 py-1 rounded shadow-[0_0_10px_rgba(59,130,246,0.1)]">Core
+                                Expertise</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div
+                                class="glass-panel p-6 rounded-xl transition-all duration-300 group cursor-default glow-hover icon-ignite">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-white/10 group-hover:border-accent/50 group-hover:bg-accent/10">
+                                    <span
+                                        class="material-symbols-outlined text-primary-glow transition-all duration-300 !text-[32px]">credit_card</span>
+                                </div>
+                                <h4
+                                    class="text-white text-lg font-bold mb-2 group-hover:text-primary-glow transition-colors">
+                                    Adquirencia Global</h4>
+                                <p class="text-slate-400 text-sm font-body leading-relaxed group-hover:text-slate-300">
+                                    Gestión estratégica de gateways, TPVs virtuales y optimización de tasas de
+                                    aprobación multi-divisa.</p>
+                            </div>
+                            <div
+                                class="glass-panel p-6 rounded-xl transition-all duration-300 group cursor-default glow-hover icon-ignite">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-white/10 group-hover:border-accent/50 group-hover:bg-accent/10">
+                                    <span
+                                        class="material-symbols-outlined text-primary-glow transition-all duration-300 !text-[32px]">currency_exchange</span>
+                                </div>
+                                <h4
+                                    class="text-white text-lg font-bold mb-2 group-hover:text-primary-glow transition-colors">
+                                    Procesamiento de Pagos</h4>
+                                <p class="text-slate-400 text-sm font-body leading-relaxed group-hover:text-slate-300">
+                                    Orquestación de transacciones en tiempo real, liquidación financiera y conciliación
+                                    automática.</p>
+                            </div>
+                            <div
+                                class="glass-panel p-6 rounded-xl transition-all duration-300 group cursor-default glow-hover icon-ignite">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-white/10 group-hover:border-accent/50 group-hover:bg-accent/10">
+                                    <span
+                                        class="material-symbols-outlined text-primary-glow transition-all duration-300 !text-[32px]">shield_lock</span>
+                                </div>
+                                <h4
+                                    class="text-white text-lg font-bold mb-2 group-hover:text-primary-glow transition-colors">
+                                    Seguridad Transaccional</h4>
+                                <p class="text-slate-400 text-sm font-body leading-relaxed group-hover:text-slate-300">
+                                    Implementación de PCI-DSS, 3D Secure y modelado predictivo de fraude con
+                                    Inteligencia Artificial.</p>
+                            </div>
+                        </div>
+                    </section>
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                        <section class="glass-panel p-6 sm:p-8 rounded-2xl h-full relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                                <span class="material-symbols-outlined text-9xl text-white">history_edu</span>
+                            </div>
+                            <h3 class="text-white text-xl font-bold flex items-center gap-3 mb-8 relative z-10">
+                                <span
+                                    class="material-symbols-outlined text-primary-glow drop-shadow-md">history_edu</span>
+                                Trayectoria Profesional
+                            </h3>
+                            <div
+                                class="relative pl-8 space-y-8 before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[1px] before:bg-gradient-to-b before:from-primary before:via-blue-800 before:to-transparent z-10">
+                                <div class="relative group">
+                                    <div
+                                        class="absolute -left-[29px] top-1.5 w-4 h-4 rounded-full bg-background-dark border-2 border-primary shadow-[0_0_15px_rgba(59,130,246,0.6)] animate-pulse">
+                                    </div>
+                                    <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-1">
+                                        <h4
+                                            class="text-white font-bold text-lg group-hover:text-primary-glow transition-colors">
+                                            Director Medios de Pago</h4>
+                                        <span
+                                            class="text-xs font-mono text-primary-glow bg-primary/10 px-2 py-0.5 rounded border border-primary/20 shadow-[0_0_5px_rgba(59,130,246,0.2)]">2020
+                                            - Presente</span>
+                                    </div>
+                                    <p class="text-slate-300 text-sm mb-2 font-medium">HEXADATA CLOUD</p>
+                                    <p class="text-slate-400 text-sm font-body leading-relaxed">Liderazgo de la división
+                                        de pagos digitales, lanzando la nueva plataforma de adquirencia para e-commerce
+                                        en LATAM.</p>
+                                </div>
+                                <div class="relative group">
+                                    <div
+                                        class="absolute -left-[29px] top-1.5 w-4 h-4 rounded-full bg-background-dark border-2 border-slate-700 group-hover:border-primary transition-colors">
+                                    </div>
+                                    <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-1">
+                                        <h4
+                                            class="text-white font-bold text-lg group-hover:text-slate-200 transition-colors">
+                                            Head of Acquiring Products</h4>
+                                        <span
+                                            class="text-xs font-mono text-slate-500 bg-white/5 px-2 py-0.5 rounded border border-white/10">2016
+                                            - 2020</span>
+                                    </div>
+                                    <p class="text-slate-300 text-sm mb-2 font-medium">GlobalPay Solutions</p>
+                                    <p class="text-slate-400 text-sm font-body leading-relaxed">Desarrollo de producto
+                                        para terminales POS Android y pasarelas de pago white-label para bancos
+                                        regionales.</p>
+                                </div>
+                                <div class="relative group">
+                                    <div
+                                        class="absolute -left-[29px] top-1.5 w-4 h-4 rounded-full bg-background-dark border-2 border-slate-700 group-hover:border-primary transition-colors">
+                                    </div>
+                                    <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-1">
+                                        <h4
+                                            class="text-white font-bold text-lg group-hover:text-slate-200 transition-colors">
+                                            Transactional Systems Lead</h4>
+                                        <span
+                                            class="text-xs font-mono text-slate-500 bg-white/5 px-2 py-0.5 rounded border border-white/10">2012
+                                            - 2016</span>
+                                    </div>
+                                    <p class="text-slate-300 text-sm mb-2 font-medium">SecureNet Inc</p>
+                                    <p class="text-slate-400 text-sm font-body leading-relaxed">Ingeniería de backend
+                                        para switch transaccional ISO 8583 y certificaciones con marcas de tarjetas.</p>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="flex flex-col gap-6">
+                            <section class="glass-panel p-6 sm:p-8 rounded-2xl border-t-2 border-t-primary/20">
+                                <h3 class="text-white text-xl font-bold flex items-center gap-3 mb-6">
+                                    <span
+                                        class="material-symbols-outlined text-primary-glow drop-shadow-md">workspace_premium</span>
+                                    Certificaciones
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div
+                                        class="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-primary/5 hover:border-primary/30 transition-all duration-300 group">
+                                        <div
+                                            class="w-10 h-10 rounded bg-orange-500/10 flex items-center justify-center shrink-0 border border-orange-500/20 group-hover:border-orange-500/50 group-hover:bg-orange-500/20 transition-all">
+                                            <span
+                                                class="material-symbols-outlined text-orange-500 text-sm">security</span>
+                                        </div>
+                                        <div>
+                                            <div
+                                                class="text-white text-sm font-bold group-hover:text-primary-glow transition-colors">
+                                                PCIP</div>
+                                            <div class="text-xs text-slate-500 group-hover:text-slate-400">PCI Security
+                                                Standards</div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-primary/5 hover:border-primary/30 transition-all duration-300 group">
+                                        <div
+                                            class="w-10 h-10 rounded bg-blue-500/10 flex items-center justify-center shrink-0 border border-blue-500/20 group-hover:border-blue-500/50 group-hover:bg-blue-500/20 transition-all">
+                                            <span class="material-symbols-outlined text-blue-400 text-sm">badge</span>
+                                        </div>
+                                        <div>
+                                            <div
+                                                class="text-white text-sm font-bold group-hover:text-primary-glow transition-colors">
+                                                CPP</div>
+                                            <div class="text-xs text-slate-500 group-hover:text-slate-400">Certified
+                                                Payments Pro</div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-primary/5 hover:border-primary/30 transition-all duration-300 group">
+                                        <div
+                                            class="w-10 h-10 rounded bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20 group-hover:border-emerald-500/50 group-hover:bg-emerald-500/20 transition-all">
+                                            <span
+                                                class="material-symbols-outlined text-emerald-400 text-sm">gavel</span>
+                                        </div>
+                                        <div>
+                                            <div
+                                                class="text-white text-sm font-bold group-hover:text-primary-glow transition-colors">
+                                                CAMS</div>
+                                            <div class="text-xs text-slate-500 group-hover:text-slate-400">Anti-Money
+                                                Laundering</div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-primary/5 hover:border-primary/30 transition-all duration-300 group">
+                                        <div
+                                            class="w-10 h-10 rounded bg-red-500/10 flex items-center justify-center shrink-0 border border-red-500/20 group-hover:border-red-500/50 group-hover:bg-red-500/20 transition-all">
+                                            <span class="material-symbols-outlined text-red-400 text-sm">school</span>
+                                        </div>
+                                        <div>
+                                            <div
+                                                class="text-white text-sm font-bold group-hover:text-primary-glow transition-colors">
+                                                Fintech Innov.</div>
+                                            <div class="text-xs text-slate-500 group-hover:text-slate-400">MIT
+                                                Professional</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section class="glass-panel p-6 sm:p-8 rounded-2xl flex-1 border-t-2 border-t-primary/20">
+                                <h3 class="text-white text-xl font-bold flex items-center gap-3 mb-6">
+                                    <span
+                                        class="material-symbols-outlined text-primary-glow drop-shadow-md">terminal</span>
+                                    Stack Tecnológico
+                                </h3>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 text-blue-200 border border-slate-700 hover:border-primary hover:text-white hover:shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all cursor-default">ISO
+                                        8583</span>
+                                    <span
+                                        class="px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 text-blue-200 border border-slate-700 hover:border-primary hover:text-white hover:shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all cursor-default">EMV
+                                        Contactless</span>
+                                    <span
+                                        class="px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 text-blue-200 border border-slate-700 hover:border-primary hover:text-white hover:shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all cursor-default">Tokenización</span>
+                                    <span
+                                        class="px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 text-blue-200 border border-slate-700 hover:border-primary hover:text-white hover:shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all cursor-default">HSM</span>
+                                    <span
+                                        class="px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 text-blue-200 border border-slate-700 hover:border-primary hover:text-white hover:shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all cursor-default">3D
+                                        Secure 2.0</span>
+                                    <span
+                                        class="px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 text-blue-200 border border-slate-700 hover:border-primary hover:text-white hover:shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all cursor-default">REST
+                                        APIs</span>
+                                    <span
+                                        class="px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 text-blue-200 border border-slate-700 hover:border-primary hover:text-white hover:shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all cursor-default">Kafka</span>
+                                    <span
+                                        class="px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 text-blue-200 border border-slate-700 hover:border-primary hover:text-white hover:shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all cursor-default">Open
+                                        Banking</span>
+                                    <span
+                                        class="px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 text-blue-200 border border-slate-700 hover:border-primary hover:text-white hover:shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all cursor-default">PCI-DSS</span>
+                                    <span
+                                        class="px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 text-blue-200 border border-slate-700 hover:border-primary hover:text-white hover:shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all cursor-default">Blockchain</span>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                    <div
+                        class="glass-panel rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 border border-primary/20 bg-gradient-to-r from-primary/20 via-background-dark/50 to-transparent relative overflow-hidden group">
+                        <div
+                            class="absolute inset-0 bg-primary/5 blur-xl group-hover:bg-primary/10 transition-all duration-500">
+                        </div>
+                        <div class="flex items-center gap-4 relative z-10">
+                            <div
+                                class="p-3 bg-primary/20 rounded-lg shadow-[0_0_20px_rgba(59,130,246,0.4)] border border-primary/30">
+                                <span class="material-symbols-outlined text-white">calendar_month</span>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold text-lg">Consultoría Estratégica en Pagos</h4>
+                                <p class="text-slate-300 text-sm">Agenda abierta para Q4 2023. Proyectos de integración
+                                    y licenciamiento.</p>
+                            </div>
+                        </div>
+                        <button
+                            class="relative z-10 w-full md:w-auto px-6 h-10 bg-white text-background-dark hover:bg-blue-50 rounded-lg font-bold text-sm transition-all whitespace-nowrap shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.5)]">
+                            Agendar Reunión
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+
+</html>
