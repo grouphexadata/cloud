@@ -3,7 +3,7 @@ echo Iniciando VIVA_FACE_LAB...
 
 :: Start backend
 cd /d C:\Users\fcoca\VIVA_FACE\backend
-start cmd /k "conda activate VIVA_FACE && uvicorn app.main:app --reload --host 0.0.0.0 --port 7891"
+start cmd /k "conda activate VIVA_FACE && uvicorn app.main:app --reload --host 0.0.0.0 --port 7892"
 
 :: Wait 3 seconds
 timeout /t 3 /nobreak >nul
