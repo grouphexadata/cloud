@@ -566,7 +566,29 @@
         padding: 10px 0;
       }
     }
-  </style>
+
+    .footer-author {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 2px solid var(--brand);
+      box-shadow: 0 0 14px rgba(0,180,216,0.40), 0 0 0 3px rgba(0,180,216,0.12);
+      object-fit: cover;
+      object-position: center top;
+      flex-shrink: 0;
+      transition: box-shadow 0.3s;
+    }
+
+    .footer-avatar:hover {
+      box-shadow: 0 0 22px rgba(0,180,216,0.65), 0 0 0 3px rgba(0,180,216,0.20);
+    }
 </head>
 <body>
   <canvas id="neural-canvas" aria-hidden="true"></canvas>
@@ -849,14 +871,20 @@ CHANGELOG.md</div>
 
   <footer>
     <div class="container">
-      <div style="margin-bottom: 6px; color: var(--brand);">HEXA-DATA CLOUD | Enterprise Architecture</div>
-      <div style="margin-bottom: 4px;">Francisco Caballero &nbsp;&mdash;&nbsp; Data Science &middot; Data Engineering &middot; Data Analytics</div>
-      <div style="font-size: 0.82rem; color: var(--muted); margin-bottom: 4px;">Tableau &nbsp;&middot;&nbsp; SQL &nbsp;&middot;&nbsp; Python &nbsp;&middot;&nbsp; ETL</div>
-      <div>
-        <a href="https://www.linkedin.com/in/frank-caballero777" target="_blank" rel="noopener noreferrer"
-           style="color: var(--brand); text-decoration: none; font-size: 0.85rem;">
-          &#128279; linkedin.com/in/frank-caballero777
+      <div style="margin-bottom: 10px; color: var(--brand); font-size: 0.82rem; letter-spacing: 0.05em;">HEXA-DATA CLOUD | Enterprise Architecture</div>
+      <div class="footer-author">
+        <a href="https://www.linkedin.com/in/frank-caballero777" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+          <img src="foto.jpg" alt="Francisco Caballero" class="footer-avatar">
         </a>
+        <div>
+          <div style="margin-bottom: 3px;">Francisco Caballero</div>
+          <div style="font-size: 0.82rem; color: var(--muted); margin-bottom: 3px;">Data Science &nbsp;&middot;&nbsp; Data Engineering &nbsp;&middot;&nbsp; Data Analytics</div>
+          <div style="font-size: 0.80rem; color: var(--muted); margin-bottom: 5px;">Tableau &nbsp;&middot;&nbsp; SQL &nbsp;&middot;&nbsp; Python &nbsp;&middot;&nbsp; ETL</div>
+          <a href="https://www.linkedin.com/in/frank-caballero777" target="_blank" rel="noopener noreferrer"
+             style="color: var(--brand); text-decoration: none; font-size: 0.82rem;">
+            &#128279; linkedin.com/in/frank-caballero777
+          </a>
+        </div>
       </div>
     </div>
   </footer>
