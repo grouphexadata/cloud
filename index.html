@@ -7,23 +7,30 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="description" content="HEXA-DATA CLOUD: ecosistema modular de inteligencia distribuida.">
   <title>HEXA-DATA CLOUD | Enterprise Architecture</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2300B4D8'/%3E%3Cstop offset='1' stop-color='%230077b6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points='16,2 28,9 28,23 16,30 4,23 4,9' fill='url(%23g)'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='monospace' font-weight='900' font-size='13' fill='%23ffffff'%3EHX%3C/text%3E%3C/svg%3E">
   <style>
     :root {
-      --bg: #08111f;
-      --surface: #0f1b2f;
-      --surface-2: #13233b;
-      --line: #26405f;
-      --text: #e7eef7;
-      --muted: #9ab0c8;
-      --brand: #4ea8ff;
-      --brand-2: #7cc1ff;
+      --bg: #030d1a;
+      --surface: rgba(7, 25, 55, 0.62);
+      --surface-2: rgba(7, 20, 45, 0.70);
+      --line: rgba(0, 180, 216, 0.18);
+      --line-bright: rgba(255,255,255,0.10);
+      --text: #e8f1fb;
+      --muted: #94a9c0;
+      --silver: #C0C5CE;
+      --brand: #00B4D8;
+      --brand-2: #7bd3ea;
       --ok: #2dd4bf;
       --warn: #f59e0b;
       --danger: #ef4444;
       --mono: "Consolas", "Courier New", monospace;
       --sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
       --radius: 12px;
-      --shadow: 0 24px 50px rgba(0, 0, 0, 0.28);
+      --shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
+      --glass-bg: rgba(7, 25, 55, 0.62);
+      --glass-blur: blur(14px);
+      --glow-brand: 0 0 18px rgba(0,180,216,0.28);
+      --glow-white: 0 0 10px rgba(255,255,255,0.08);
     }
 
     * { box-sizing: border-box; }
@@ -31,12 +38,27 @@
     html, body {
       margin: 0;
       padding: 0;
-      background: radial-gradient(1300px 700px at 95% -10%, #19355e 0%, var(--bg) 60%);
+      background: #030d1a;
+      background-image:
+        radial-gradient(ellipse 130% 60% at 80% -5%, rgba(0,70,130,0.50) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 40% at 5% 95%, rgba(0,60,120,0.30) 0%, transparent 55%);
       color: var(--text);
       font-family: var(--sans);
       line-height: 1.5;
       scroll-behavior: smooth;
     }
+
+    /* Neural canvas */
+    #neural-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    header, nav, main, footer { position: relative; z-index: 1; }
 
     .container {
       width: min(1160px, 92vw);
@@ -47,9 +69,11 @@
       position: sticky;
       top: 0;
       z-index: 20;
-      backdrop-filter: blur(8px);
-      background: rgba(8, 17, 31, 0.86);
-      border-bottom: 1px solid var(--line);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      background: var(--glass-bg);
+      border-bottom: 1px solid var(--line-bright);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 1px 0 rgba(0,180,216,0.15);
     }
 
     .topbar-inner {
@@ -74,11 +98,11 @@
       border-radius: 8px;
       display: grid;
       place-items: center;
-      background: linear-gradient(160deg, var(--brand), #2563eb);
-      color: #041325;
+      background: linear-gradient(160deg, var(--brand), #0077b6);
+      color: #fff;
       font-weight: 900;
       font-family: var(--mono);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
+      box-shadow: 0 0 14px rgba(0,180,216,0.4), inset 0 0 0 1px rgba(255,255,255,0.15);
     }
 
     .nav {
@@ -127,10 +151,18 @@
 
     .hero-panel,
     .card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent), var(--surface);
-      border: 1px solid var(--line);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--line-bright);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow), var(--glow-white);
+      transition: box-shadow 0.3s, border-color 0.3s;
+    }
+
+    .card:hover {
+      border-color: rgba(0,180,216,0.30);
+      box-shadow: var(--shadow), var(--glow-brand);
     }
 
     .hero-panel {
@@ -147,7 +179,7 @@
     }
 
     .kpi {
-      background: var(--surface-2);
+      background: rgba(0,20,50,0.60);
       border: 1px solid var(--line);
       border-radius: 10px;
       padding: 12px;
@@ -156,8 +188,9 @@
     .kpi-value {
       font-family: var(--mono);
       font-size: 1.25rem;
-      color: var(--brand-2);
+      color: var(--brand);
       margin-bottom: 4px;
+      text-shadow: 0 0 12px rgba(0,180,216,0.5);
     }
 
     .kpi-label {
@@ -243,10 +276,16 @@
       border: 1px solid var(--line);
       border-radius: 10px;
       padding: 11px 12px;
-      background: var(--surface-2);
+      background: rgba(0,20,50,0.55);
       font-family: var(--mono);
       font-size: 0.85rem;
-      color: var(--brand-2);
+      color: var(--brand);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .repo-item:hover {
+      border-color: rgba(0,180,216,0.35);
+      box-shadow: 0 0 14px rgba(0,180,216,0.15);
     }
 
     .status {
@@ -289,7 +328,8 @@
       border-left: 4px solid var(--brand);
       border-radius: 10px;
       padding: 11px 12px;
-      background: var(--surface-2);
+      background: rgba(0,20,50,0.55);
+      box-shadow: -2px 0 12px rgba(0,180,216,0.10);
     }
 
     .layer strong {
@@ -299,7 +339,8 @@
       text-transform: uppercase;
       letter-spacing: 0.07em;
       margin-bottom: 3px;
-      color: var(--brand-2);
+      color: var(--brand);
+      text-shadow: 0 0 10px rgba(0,180,216,0.4);
     }
 
     .repo-structure {
@@ -323,7 +364,14 @@
       border: 1px solid var(--line);
       border-radius: 10px;
       padding: 12px;
-      background: var(--surface-2);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      transition: border-color 0.2s;
+    }
+
+    .phase:hover {
+      border-color: rgba(0,180,216,0.30);
     }
 
     .phase h4 {
@@ -339,9 +387,12 @@
 
     .cta {
       padding: 18px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--line-bright);
       border-radius: var(--radius);
-      background: linear-gradient(120deg, rgba(78,168,255,0.15), rgba(124,193,255,0.06));
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      box-shadow: var(--glow-brand);
       display: flex;
       justify-content: space-between;
       gap: 18px;
@@ -355,13 +406,15 @@
       align-items: center;
       gap: 8px;
       border-radius: 10px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--line-bright);
       color: var(--text);
       padding: 10px 14px;
       font-weight: 600;
       font-size: 0.9rem;
       transition: 0.2s ease;
-      background: var(--surface);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
     }
 
     .btn:hover {
@@ -370,9 +423,14 @@
     }
 
     .btn.primary {
-      background: linear-gradient(160deg, var(--brand), #2563eb);
-      color: #041325;
+      background: linear-gradient(135deg, var(--brand), #0077b6);
+      color: #fff;
       border-color: rgba(255,255,255,0.1);
+      box-shadow: 0 4px 16px rgba(0,180,216,0.35);
+    }
+
+    .btn.primary:hover {
+      box-shadow: 0 6px 24px rgba(0,180,216,0.55);
     }
 
     footer {
@@ -384,21 +442,23 @@
     }
 
     .impact-section {
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
+      border-top: 1px solid var(--line-bright);
+      border-bottom: 1px solid var(--line-bright);
       padding: 64px 0;
-      background: linear-gradient(180deg, transparent, rgba(78,168,255,0.04) 50%, transparent);
+      background: linear-gradient(180deg, transparent, rgba(0,180,216,0.04) 50%, transparent);
+      position: relative;
     }
 
     .impact-quote {
       border-left: 3px solid var(--brand);
-      padding: 14px 22px;
-      margin: 0 0 32px;
+      padding: 16px 22px;
+      margin: 0 0 36px;
       color: var(--brand-2);
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-style: italic;
-      background: rgba(78,168,255,0.06);
+      background: rgba(0,180,216,0.06);
       border-radius: 0 var(--radius) var(--radius) 0;
+      box-shadow: -3px 0 20px rgba(0,180,216,0.20);
     }
 
     .impact-body {
@@ -428,9 +488,18 @@
       gap: 12px;
       align-items: flex-start;
       padding: 14px 16px;
-      background: var(--surface);
-      border: 1px solid var(--line);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--line-bright);
       border-radius: var(--radius);
+      box-shadow: var(--glow-white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .impact-feature:hover {
+      border-color: rgba(0,180,216,0.30);
+      box-shadow: var(--glow-brand);
     }
 
     .impact-feature-icon {
@@ -441,9 +510,10 @@
 
     .impact-feature-text strong {
       display: block;
-      color: var(--brand-2);
+      color: var(--brand);
       font-size: 0.9rem;
       margin-bottom: 2px;
+      text-shadow: 0 0 10px rgba(0,180,216,0.35);
     }
 
     .impact-feature-text span {
@@ -468,7 +538,7 @@
     }
 
     .impact-author strong {
-      color: var(--brand-2);
+      color: var(--brand);
     }
 
     .impact-closing-quote {
@@ -501,6 +571,7 @@
   </style>
 </head>
 <body>
+  <canvas id="neural-canvas" aria-hidden="true"></canvas>
   <header class="topbar">
     <div class="container topbar-inner">
       <div class="brand">
@@ -775,9 +846,77 @@ CHANGELOG.md</div>
 
   <footer>
     <div class="container">
-      <div style="margin-bottom: 6px;">HEXA-DATA CLOUD | Enterprise Architecture</div>
-      <div>Arquitectura, gobernanza y evolucion progresiva de informacion y soluciones.</div>
+      <div style="margin-bottom: 6px; color: var(--brand);">HEXA-DATA CLOUD | Enterprise Architecture</div>
+      <div>Arquitectura, gobernanza y evolucion progresiva &mdash; Francisco Caballero</div>
     </div>
   </footer>
+
+  <script>
+    (function initNeuralCanvas() {
+      const canvas = document.getElementById('neural-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let W, H, nodes, raf;
+
+      function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+
+      function makeNode() {
+        return {
+          x: Math.random() * W, y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.40, vy: (Math.random() - 0.5) * 0.40,
+          r: Math.random() * 2.0 + 1.0, pulse: Math.random() * Math.PI * 2
+        };
+      }
+
+      function init() {
+        const count = Math.min(65, Math.floor((W * H) / 14000));
+        nodes = Array.from({ length: count }, makeNode);
+      }
+
+      const DIST = 150;
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        const t = Date.now() * 0.0008;
+
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            if (d < DIST) {
+              ctx.beginPath();
+              ctx.moveTo(nodes[i].x, nodes[i].y);
+              ctx.lineTo(nodes[j].x, nodes[j].y);
+              ctx.strokeStyle = 'rgba(0, 140, 180, ' + ((1 - d / DIST) * 0.32) + ')';
+              ctx.lineWidth = (1 - d / DIST) * 1.1;
+              ctx.stroke();
+            }
+          }
+        }
+
+        nodes.forEach(n => {
+          const pulse = (Math.sin(t * 1.5 + n.pulse) + 1) * 0.5;
+          const r = n.r + pulse * 1.4;
+          const alpha = 0.45 + pulse * 0.45;
+          const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, r * 4);
+          grd.addColorStop(0, 'rgba(123, 211, 234, ' + (alpha * 0.55) + ')');
+          grd.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.beginPath(); ctx.arc(n.x, n.y, r * 4, 0, Math.PI * 2);
+          ctx.fillStyle = grd; ctx.fill();
+          ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(0, 180, 216, ' + alpha + ')'; ctx.fill();
+          n.x += n.vx; n.y += n.vy;
+          if (n.x < 0 || n.x > W) n.vx *= -1;
+          if (n.y < 0 || n.y > H) n.vy *= -1;
+        });
+
+        raf = requestAnimationFrame(draw);
+      }
+
+      const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (!mq.matches) { resize(); init(); draw(); }
+      window.addEventListener('resize', () => { cancelAnimationFrame(raf); resize(); init(); draw(); });
+    })();
+  </script>
 </body>
 </html>
