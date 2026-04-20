@@ -411,6 +411,66 @@
             justify-content: space-between;
             align-items: center;
             border-radius: 6px 6px 0 0;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .copy-output-btn {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--turquoise);
+            background: rgba(0,180,216,0.10);
+            color: var(--turquoise);
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+        }
+
+        .copy-output-btn:hover {
+            background: rgba(0,180,216,0.22);
+            box-shadow: 0 0 10px rgba(0,180,216,0.30);
+        }
+
+        .copy-output-btn.copied {
+            color: var(--emerald);
+            border-color: var(--emerald);
+            background: rgba(45,212,191,0.10);
+        }
+
+        /* Resumen Ejecutivo box */
+        .resumen-ejecutivo {
+            background: rgba(0,180,216,0.07);
+            border: 1px solid rgba(0,180,216,0.25);
+            border-left: 3px solid var(--turquoise);
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.4rem;
+            box-shadow: 0 0 18px rgba(0,180,216,0.08);
+        }
+
+        .resumen-ejecutivo .re-title {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: var(--turquoise);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.6rem;
+            text-shadow: 0 0 10px rgba(0,180,216,0.40);
+        }
+
+        .resumen-ejecutivo .re-body {
+            font-size: 0.9rem;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .resumen-ejecutivo .re-meta {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-top: 0.7rem;
         }
 
         .output-status {
@@ -1022,6 +1082,7 @@
                             <span class="status-item" id="statusCompleteness">COMPLETITUD: --</span>
                             <span class="status-item" id="statusImpact">IMPACTO: --</span>
                         </div>
+                        <button class="copy-output-btn" id="copyOutputBtn" onclick="copyOutput(this)" title="Copiar output al portapapeles">📋 Copiar Prompt</button>
                     </div>
                     <div class="output-content" id="outputContent">
                         <div style="color: var(--text-dim); text-align: center; padding-top: 4rem; font-style: italic;">
@@ -2159,9 +2220,21 @@ CHANGELOG.md</pre>
             ];
 
             const html = `
-                <h4>📊 Resumen Ejecutivo</h4>
-                <p style="margin-bottom: 1rem;">Input de <strong>${words} palabras</strong> clasificado como dominio <span class="tag">${domain}</span> 
-                con complejidad <strong>${complexity}/10</strong>. Se detectaron ${gaps.length} gaps críticos que requieren atención.</p>
+                <div class="resumen-ejecutivo">
+                    <div class="re-title">📊 Resumen Ejecutivo</div>
+                    <div class="re-body">
+                        Input de <strong>${words} palabras</strong> clasificado como dominio
+                        <span class="tag">${domain}</span> con complejidad
+                        <strong style="color:var(--turquoise)">${complexity}/10</strong>.
+                        Se detectaron <strong style="color:var(--warn)">${gaps.length} gaps críticos</strong> que requieren atención.
+                    </div>
+                    <div class="re-meta">
+                        <span class="tag verified">Roles: ${roles.length}</span>
+                        <span class="tag">Pasos: 5</span>
+                        <span class="tag">Riesgos: ${risks.length}</span>
+                        <span class="tag verified">Abril 2026</span>
+                    </div>
+                </div>
 
                 <h4>🎯 Análisis Inicial</h4>
                 <ul>
@@ -2220,6 +2293,37 @@ CHANGELOG.md</pre>
             `;
 
             return { html, metrics: { precision, completeness, impact } };
+        }
+
+        function copyOutput(btn) {
+            const outputEl = document.getElementById('outputContent');
+            if (!outputEl || outputEl.innerText.includes('Sistema listo')) return;
+
+            const text = outputEl.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = '✓ Copiado';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋 Copiar Prompt';
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(() => {
+                // Fallback for non-https
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                btn.textContent = '✓ Copiado';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋 Copiar Prompt';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
         }
 
         function addToHistory(preview, metrics) {
