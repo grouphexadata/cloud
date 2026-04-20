@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="description" content="HEXA-DATA CLOUD: ecosistema modular de inteligencia distribuida.">
+  <title>HEXA-DATA CLOUD | Enterprise Architecture</title>
+  <style>
+    :root {
+      --bg: #08111f;
+      --surface: #0f1b2f;
+      --surface-2: #13233b;
+      --line: #26405f;
+      --text: #e7eef7;
+      --muted: #9ab0c8;
+      --brand: #4ea8ff;
+      --brand-2: #7cc1ff;
+      --ok: #2dd4bf;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --mono: "Consolas", "Courier New", monospace;
+      --sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      --radius: 12px;
+      --shadow: 0 24px 50px rgba(0, 0, 0, 0.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(1300px 700px at 95% -10%, #19355e 0%, var(--bg) 60%);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      width: min(1160px, 92vw);
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(8px);
+      background: rgba(8, 17, 31, 0.86);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 68px;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(160deg, var(--brand), #2563eb);
+      color: #041325;
+      font-weight: 900;
+      font-family: var(--mono);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
+    }
+
+    .nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      transition: 0.2s ease;
+    }
+
+    .nav a:hover {
+      color: var(--text);
+      border-color: var(--line);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .hero {
+      padding: 72px 0 42px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: clamp(1.9rem, 4vw, 3.2rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      max-width: 62ch;
+    }
+
+    .hero-panel,
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent), var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-panel {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .kpi {
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .kpi-value {
+      font-family: var(--mono);
+      font-size: 1.25rem;
+      color: var(--brand-2);
+      margin-bottom: 4px;
+    }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 12px 0 0;
+    }
+
+    .pill {
+      font-size: 0.76rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .section {
+      padding: 34px 0;
+    }
+
+    .section h2 {
+      margin: 0 0 14px;
+      font-size: 1.55rem;
+      letter-spacing: -0.01em;
+    }
+
+    .section-intro {
+      color: var(--muted);
+      margin: 0 0 22px;
+      max-width: 80ch;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .card {
+      padding: 16px;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 1.06rem;
+    }
+
+    .card p,
+    .card li {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .card ul {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .repo-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .repo-item {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 11px 12px;
+      background: var(--surface-2);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--brand-2);
+    }
+
+    .status {
+      display: inline-block;
+      margin-left: 8px;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 0.68rem;
+      border: 1px solid transparent;
+      vertical-align: middle;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status.ok {
+      color: var(--ok);
+      border-color: rgba(45,212,191,0.4);
+      background: rgba(45,212,191,0.1);
+    }
+
+    .status.progress {
+      color: var(--warn);
+      border-color: rgba(245,158,11,0.4);
+      background: rgba(245,158,11,0.1);
+    }
+
+    .status.plan {
+      color: var(--muted);
+      border-color: rgba(154,176,200,0.35);
+      background: rgba(154,176,200,0.08);
+    }
+
+    .layer-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .layer {
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--brand);
+      border-radius: 10px;
+      padding: 11px 12px;
+      background: var(--surface-2);
+    }
+
+    .layer strong {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 3px;
+      color: var(--brand-2);
+    }
+
+    .repo-structure {
+      background: #08172c;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px;
+      font-family: var(--mono);
+      color: #a6c4e3;
+      overflow-x: auto;
+      white-space: pre;
+      font-size: 0.86rem;
+    }
+
+    .roadmap {
+      display: grid;
+      gap: 12px;
+    }
+
+    .phase {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      background: var(--surface-2);
+    }
+
+    .phase h4 {
+      margin: 0 0 6px;
+      font-size: 0.96rem;
+    }
+
+    .phase p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .cta {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(120deg, rgba(78,168,255,0.15), rgba(124,193,255,0.06));
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: 0.2s ease;
+      background: var(--surface);
+    }
+
+    .btn:hover {
+      border-color: var(--brand);
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      background: linear-gradient(160deg, var(--brand), #2563eb);
+      color: #041325;
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    footer {
+      padding: 30px 0 42px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      margin-top: 24px;
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 1000px) {
+      .hero,
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .kpis {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar-inner {
+        align-items: flex-start;
+        padding: 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-badge">HX</div>
+        <div>HEXA-DATA CLOUD</div>
+      </div>
+      <nav class="nav" aria-label="Principal">
+        <a href="#vision">Vision</a>
+        <a href="#architecture">Arquitectura</a>
+        <a href="#repos">Repos</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#contact">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="container hero" id="vision">
+      <div>
+        <h1>HEXA-DATA CLOUD — Ecosistema modular de inteligencia distribuida</h1>
+        <p>
+          Arquitectura empresarial, gobierno tecnico y escalabilidad progresiva.
+          La informacion se publica por fases, sin ruido, siguiendo una estrategia
+          multi-repo con repositorio central de estandares.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Enterprise UX</span>
+          <span class="pill">Hybrid Repo Strategy</span>
+          <span class="pill">Security First</span>
+          <span class="pill">Progressive Content Delivery</span>
+        </div>
+        <div class="kpis" aria-label="Indicadores">
+          <div class="kpi">
+            <div class="kpi-value">17</div>
+            <div class="kpi-label">Repos objetivo</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-value">5</div>
+            <div class="kpi-label">Capas de arquitectura</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-value">3</div>
+            <div class="kpi-label">Fase inicial prioritaria</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="hero-panel" aria-label="Resumen ejecutivo">
+        <div>
+          <strong style="color: var(--brand-2);">Resumen ejecutivo</strong>
+          <p style="margin: 8px 0 0; color: var(--muted);">
+            No es un repositorio aislado. Es un portfolio de plataforma con gobierno, contratos,
+            estandares y roadmap de evolucion tecnica.
+          </p>
+        </div>
+        <div>
+          <strong style="color: var(--brand-2);">Mensaje institucional</strong>
+          <p style="margin: 8px 0 0; color: var(--muted);">
+            HEXA-DATA CLOUD es un ecosistema modular de inteligencia distribuida.
+          </p>
+        </div>
+        <div>
+          <strong style="color: var(--brand-2);">Ejecucion recomendada</strong>
+          <p style="margin: 8px 0 0; color: var(--muted);">
+            Iniciar con CORE, SECURITY y OSINT. Escalar despues a SDK, contratos, DevOps e Infra.
+          </p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section" id="architecture">
+      <div class="container">
+        <h2>Decision de arquitectura: estrategia hibrida</h2>
+        <p class="section-intro">
+          Multi-repo como base para independencia por producto, mas un repositorio central para normas
+          compartidas, contratos y lineamientos de seguridad.
+        </p>
+
+        <div class="grid-2">
+          <article class="card">
+            <h3>Modelo operativo</h3>
+            <ul>
+              <li>Multi-repo para velocidad por dominio.</li>
+              <li>hexadata-architecture como fuente de verdad tecnica.</li>
+              <li>hexadata-api-contracts para versionar interfaces.</li>
+              <li>hexadata-sdk para consumo uniforme entre modulos.</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h3>Capas del ecosistema</h3>
+            <div class="layer-stack">
+              <div class="layer"><strong>Experience</strong>Dashboards, BI, interfaces.</div>
+              <div class="layer"><strong>Intelligence</strong>OSINT, AI, analytics.</div>
+              <div class="layer"><strong>Security</strong>Auth, monitoring, policy.</div>
+              <div class="layer"><strong>Core</strong>Orquestacion y procesamiento.</div>
+              <div class="layer"><strong>Infrastructure</strong>Storage, backup, cloud.</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="repos">
+      <div class="container">
+        <h2>Estructura GitHub propuesta</h2>
+        <p class="section-intro">
+          Organizacion objetivo: <strong>hexadata-cloud</strong>. Naming uniforme: <code>hexadata-[dominio]</code>.
+        </p>
+
+        <div class="card" style="margin-bottom: 14px;">
+          <h3>Repos principales</h3>
+          <div class="repo-list">
+            <div class="repo-item">hexadata-core <span class="status ok">prioridad</span></div>
+            <div class="repo-item">hexadata-ident <span class="status plan">plan</span></div>
+            <div class="repo-item">hexadata-watson <span class="status plan">plan</span></div>
+            <div class="repo-item">hexadata-security <span class="status ok">prioridad</span></div>
+            <div class="repo-item">hexadata-authenticator <span class="status progress">progreso</span></div>
+            <div class="repo-item">hexadata-bi <span class="status progress">progreso</span></div>
+            <div class="repo-item">hexadata-lab-diamante <span class="status plan">plan</span></div>
+            <div class="repo-item">hexadata-osint <span class="status ok">prioridad</span></div>
+            <div class="repo-item">hexadata-beyond-cloud <span class="status plan">plan</span></div>
+            <div class="repo-item">hexadata-backup <span class="status plan">plan</span></div>
+            <div class="repo-item">hexadata-pay <span class="status plan">plan</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 14px;">
+          <h3>Repos estrategicos</h3>
+          <div class="repo-list">
+            <div class="repo-item">hexadata-architecture <span class="status ok">activo</span></div>
+            <div class="repo-item">hexadata-sdk <span class="status progress">progreso</span></div>
+            <div class="repo-item">hexadata-api-contracts <span class="status progress">progreso</span></div>
+            <div class="repo-item">hexadata-infra <span class="status plan">plan</span></div>
+            <div class="repo-item">hexadata-devops <span class="status progress">progreso</span></div>
+            <div class="repo-item">hexadata-design-system <span class="status plan">plan</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Estructura estandar por repositorio</h3>
+          <div class="repo-structure">/src
+/tests
+/docs
+/examples
+/.github
+README.md
+LICENSE
+CONTRIBUTING.md
+CHANGELOG.md</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="roadmap">
+      <div class="container">
+        <h2>Roadmap de publicacion progresiva</h2>
+        <p class="section-intro">
+          Subir informacion y soluciones por etapas evita ruido, mejora calidad documental y mantiene
+          coherencia de arquitectura.
+        </p>
+
+        <div class="roadmap">
+          <article class="phase">
+            <h4>Fase 1 | Foundation (ahora)</h4>
+            <p>Publicar Core, Security y OSINT con README robusto, CI base, CODEOWNERS y docs iniciales.</p>
+          </article>
+
+          <article class="phase">
+            <h4>Fase 2 | Contracts + SDK</h4>
+            <p>Definir contratos de API, versionado y SDK compartido para consumo uniforme entre equipos.</p>
+          </article>
+
+          <article class="phase">
+            <h4>Fase 3 | Infra + DevOps</h4>
+            <p>Incorporar IaC, pipelines de release, controles de seguridad y governance de despliegue.</p>
+          </article>
+
+          <article class="phase">
+            <h4>Fase 4 | Expansion</h4>
+            <p>Escalar modulos de negocio y disenar capa de experiencia con lineamientos de design system.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="cta">
+          <div>
+            <h2 style="margin: 0 0 6px;">Solicitar informacion tecnica</h2>
+            <p style="margin: 0; color: var(--muted);">
+              El formulario de interes esta disponible para recibir requerimientos y responder por prioridad.
+            </p>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a class="btn primary" href="hexadata_prompt.html">Abrir portal de solicitudes</a>
+            <a class="btn" href="github-enterprise-blueprint/GITHUB_ENTERPRISE_BLUEPRINT.md">Ver blueprint GitHub</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="margin-bottom: 6px;">HEXA-DATA CLOUD | Enterprise Architecture</div>
+      <div>Arquitectura, gobernanza y evolucion progresiva de informacion y soluciones.</div>
+    </div>
+  </footer>
+</body>
+</html>

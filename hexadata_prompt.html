@@ -1,0 +1,2155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://script.google.com https://script.googleusercontent.com; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="color-scheme" content="dark">
+    <title>ARCHITECTO EVOLUTIVO v3.0 | Sistema de Prompts Multipropósito</title>
+    <style>
+        :root {
+            --void: #050505;
+            --surface: #0f0f11;
+            --panel: #16161a;
+            --border: #2a2a2e;
+            --text: #e2e2e2;
+            --text-dim: #888899;
+            --amber: #f59e0b;
+            --amber-glow: rgba(245, 158, 11, 0.15);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.15);
+            --rose: #f43f5e;
+            --cyan: #06b6d4;
+            --font-mono: 'Courier New', 'SF Mono', Consolas, monospace;
+            --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--void);
+            color: var(--text);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--void); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--amber); }
+
+        /* Animations */
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+        @keyframes stamp {
+            0% { transform: scale(2) rotate(-10deg); opacity: 0; }
+            100% { transform: scale(1) rotate(-5deg); opacity: 1; }
+        }
+        @keyframes type-cursor {
+            0%, 100% { border-color: transparent; }
+            50% { border-color: var(--amber); }
+        }
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes border-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--amber), transparent);
+            opacity: 0.3;
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Layout */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        
+        /* Header */
+        header {
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, var(--surface) 0%, var(--void) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            padding: 2rem 0;
+            gap: 2rem;
+        }
+
+        .brand {
+            position: relative;
+        }
+
+        .brand h1 {
+            font-family: var(--font-mono);
+            font-size: 2rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text) 0%, var(--amber) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand .subtitle {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .validation-stamp {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        .stamp-badge {
+            border: 2px solid var(--emerald);
+            color: var(--emerald);
+            padding: 0.5rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: relative;
+            background: var(--emerald-glow);
+            animation: stamp 0.6s ease-out forwards;
+            transform-origin: center;
+        }
+
+        .stamp-badge::before {
+            content: '✓';
+            margin-right: 0.5rem;
+        }
+
+        .date-trail {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+        .nav-tab.active {
+            color: var(--amber);
+            border-bottom-color: var(--amber);
+            background: var(--amber-glow);
+        }
+
+        /* Main Content */
+        main { padding: 3rem 0; }
+
+        .section {
+            display: none;
+            animation: slide-up 0.5s ease-out;
+        }
+        .section.active { display: block; }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 1.5rem;
+            background: var(--amber);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, var(--amber), var(--emerald), var(--cyan), var(--amber));
+            background-size: 300% 300%;
+            animation: border-flow 4s ease infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover::before { opacity: 1; }
+
+        /* Idea Processor */
+        .processor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) { .processor-grid { grid-template-columns: 1fr; } }
+
+        .input-zone {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .zone-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--amber);
+            letter-spacing: 0.1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        textarea, .code-block {
+            width: 100%;
+            min-height: 300px;
+            background: var(--void);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            padding: 1rem;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--amber);
+            box-shadow: 0 0 0 3px var(--amber-glow);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--amber);
+            color: var(--void);
+            border: none;
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn:active { transform: translateY(0); }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover { border-color: var(--text); color: var(--text); box-shadow: none; }
+
+        /* Output Zone */
+        .output-zone {
+            background: var(--void);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .output-header {
+            background: var(--panel);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .output-status {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            color: var(--text-dim);
+        }
+
+        .status-item.valid { color: var(--emerald); }
+        .status-item.pending { color: var(--amber); }
+
+        .output-content {
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            min-height: 300px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .output-content h4 {
+            color: var(--amber);
+            font-family: var(--font-mono);
+            margin: 1.5rem 0 0.5rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .output-content h4:first-child { margin-top: 0; }
+
+        .output-content ul {
+            margin-left: 1.2rem;
+            color: var(--text-dim);
+        }
+
+        .output-content li { margin-bottom: 0.35rem; }
+
+        .tag {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--amber);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tag.verified {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: var(--emerald);
+        }
+
+        /* Protocol Steps */
+        .protocol-timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .protocol-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--amber), var(--emerald), var(--cyan));
+        }
+
+        .step {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 1.5rem;
+            opacity: 0;
+            transform: translateX(-10px);
+            animation: slide-up 0.5s ease-out forwards;
+        }
+
+        .step:nth-child(1) { animation-delay: 0.1s; }
+        .step:nth-child(2) { animation-delay: 0.2s; }
+        .step:nth-child(3) { animation-delay: 0.3s; }
+        .step:nth-child(4) { animation-delay: 0.4s; }
+        .step:nth-child(5) { animation-delay: 0.5s; }
+        .step:nth-child(6) { animation-delay: 0.6s; }
+
+        .step::before {
+            content: attr(data-step);
+            position: absolute;
+            left: -2rem;
+            top: 0;
+            width: 1.5rem;
+            height: 1.5rem;
+            background: var(--panel);
+            border: 2px solid var(--amber);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: var(--amber);
+        }
+
+        .step-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .step-desc {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .step-meta {
+            margin-top: 0.75rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Prompt Code Block */
+        .prompt-container {
+            position: relative;
+            background: var(--void);
+            border: 1px solid var(--border);
+            margin: 1.5rem 0;
+        }
+
+        .prompt-header {
+            background: var(--panel);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .prompt-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 0.35rem 0.75rem;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        pre {
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: var(--text);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .code-keyword { color: var(--rose); }
+        .code-string { color: var(--emerald); }
+        .code-comment { color: var(--text-dim); font-style: italic; }
+        .code-tag { color: var(--cyan); }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 1rem;
+            background: var(--panel);
+            border-bottom: 2px solid var(--amber);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--amber);
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+
+        .data-table tr:hover td {
+            background: rgba(255,255,255,0.02);
+            color: var(--text);
+        }
+
+        /* Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .metric {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            padding: 1.25rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .metric-value {
+            font-family: var(--font-mono);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--amber);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+        }
+
+        /* Alert Boxes */
+        .alert {
+            border-left: 3px solid var(--amber);
+            background: var(--amber-glow);
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .alert strong { color: var(--amber); }
+
+        .alert.danger {
+            border-left-color: var(--rose);
+            background: rgba(244, 63, 94, 0.1);
+        }
+        .alert.danger strong { color: var(--rose); }
+
+        .alert.info {
+            border-left-color: var(--cyan);
+            background: rgba(6, 182, 212, 0.1);
+        }
+        .alert.info strong { color: var(--cyan); }
+
+        .repo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .repo-chip {
+            border: 1px solid var(--border);
+            background: var(--void);
+            padding: 1rem;
+        }
+
+        .repo-chip strong {
+            color: var(--text);
+            display: block;
+            margin-bottom: 0.35rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+
+        .layer-stack {
+            display: grid;
+            gap: 0.85rem;
+            margin-top: 1rem;
+        }
+
+        .layer {
+            border: 1px solid var(--border);
+            padding: 1rem 1.25rem;
+            background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+        }
+
+        .layer-title {
+            color: var(--amber);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.4rem;
+        }
+
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .telemetry-strip {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .telemetry-stat {
+            border: 1px solid var(--border);
+            background: var(--void);
+            padding: 0.9rem;
+        }
+
+        .telemetry-stat-value {
+            font-family: var(--font-mono);
+            font-size: 1.4rem;
+            color: var(--emerald);
+            margin-bottom: 0.25rem;
+        }
+
+        .consent-banner {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            max-width: 420px;
+            background: rgba(15, 15, 17, 0.96);
+            border: 1px solid var(--border);
+            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+            padding: 1rem;
+            z-index: 1000;
+        }
+
+        .consent-banner p {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin: 0.6rem 0 0.9rem;
+        }
+
+        .consent-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: 1px solid var(--border);
+            padding: 0.3rem 0.6rem;
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .interest-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 1.5rem;
+        }
+
+        .interest-form {
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .field-group {
+            display: grid;
+            gap: 0.4rem;
+        }
+
+        .field-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-dim);
+        }
+
+        .field-input,
+        .field-select,
+        .field-textarea {
+            width: 100%;
+            background: var(--void);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.85rem 0.95rem;
+            font-family: var(--font-sans);
+            font-size: 0.92rem;
+        }
+
+        .field-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .field-input:focus,
+        .field-select:focus,
+        .field-textarea:focus {
+            outline: none;
+            border-color: var(--amber);
+            box-shadow: 0 0 0 3px var(--amber-glow);
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .checkbox-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: var(--text-dim);
+            font-size: 0.88rem;
+        }
+
+        .interest-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .signal-list {
+            display: grid;
+            gap: 0.85rem;
+            margin-top: 1rem;
+        }
+
+        .signal-item {
+            border: 1px solid var(--border);
+            padding: 0.9rem 1rem;
+            background: var(--void);
+        }
+
+        .signal-item strong {
+            display: block;
+            color: var(--amber);
+            margin-bottom: 0.35rem;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+        }
+
+        .inline-status {
+            min-height: 1.25rem;
+            font-size: 0.82rem;
+            color: var(--text-dim);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem 0;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+            margin-top: 3rem;
+        }
+
+        .typing::after {
+            content: '|';
+            animation: type-cursor 1s infinite;
+            color: var(--amber);
+        }
+
+        .hidden { display: none !important; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-grid { grid-template-columns: 1fr; }
+            .validation-stamp { align-items: flex-start; }
+            .metrics-grid { grid-template-columns: 1fr 1fr; }
+            .interest-grid { grid-template-columns: 1fr; }
+            .consent-banner { left: 16px; right: 16px; bottom: 16px; max-width: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+
+    <header>
+        <div class="container header-grid">
+            <div class="brand">
+                <h1>ARCHITECTO EVOLUTIVO v3.0</h1>
+                <div class="subtitle">Sistema de Ingeniería de Prompts Multipropósito</div>
+            </div>
+            <div class="validation-stamp">
+                <div class="stamp-badge">Validado Abril 2026</div>
+                <div class="date-trail">TRAZABILIDAD: AE-2026-04-19-V3</div>
+                <div class="date-trail" style="font-size: 0.65rem; margin-top: 0.25rem;">
+                    FIRMA DIGITAL: <span style="color: var(--emerald);">VERIFICADA</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="switchTab('processor', this)">Procesador de Ideas</button>
+                <button class="nav-tab" onclick="switchTab('prompt', this)">Meta-Prompt v2.0</button>
+                <button class="nav-tab" onclick="switchTab('protocol', this)">Protocolo 6 Pasos</button>
+                <button class="nav-tab" onclick="switchTab('compare', this)">Comparativa</button>
+                <button class="nav-tab" onclick="switchTab('ecosystem', this)">Ecosistema</button>
+                <button class="nav-tab" onclick="switchTab('interest', this)">Interés</button>
+                <button class="nav-tab" onclick="switchTab('implement', this)">Implementación</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- TAB: PROCESSOR -->
+        <section id="processor" class="section active">
+            <h2 class="section-title">Procesador de Ideas Desordenadas</h2>
+            
+            <div class="alert">
+                <strong>MODO AUTOMATIZADO:</strong> Pega tus ideas en bruto (texto libre, notas sueltas, frases incompletas). 
+                El sistema aplicará el Protocolo del Architecto para estructurar, validar y entregar un output accionable.
+            </div>
+
+            <div class="processor-grid">
+                <div class="input-zone">
+                    <div class="zone-label">
+                        <span>Input Bruto [ENTRADA]</span>
+                        <span style="color: var(--text-dim); font-size: 0.7rem;">Markdown soportado</span>
+                    </div>
+                    <textarea id="rawInput" placeholder="Ejemplo: Tengo una idea de app para sostenibilidad, presupuesto 5k, quiero llegar a startups tech, no sé por dónde empezar, necesito validar el mercado antes de gastar..."></textarea>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button class="btn" onclick="processIdeas()">
+                            <span>⚡</span> Estructurar con Architecto
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearAll()">Limpiar</button>
+                    </div>
+                </div>
+
+                <div class="output-zone">
+                    <div class="output-header">
+                        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--amber);">OUTPUT ESTRUCTURADO</span>
+                        <div class="output-status">
+                            <span class="status-item" id="statusPrecision">PRECISIÓN: --</span>
+                            <span class="status-item" id="statusCompleteness">COMPLETITUD: --</span>
+                            <span class="status-item" id="statusImpact">IMPACTO: --</span>
+                        </div>
+                    </div>
+                    <div class="output-content" id="outputContent">
+                        <div style="color: var(--text-dim); text-align: center; padding-top: 4rem; font-style: italic;">
+                            [Sistema listo. Agrega ideas en el panel izquierdo y ejecuta el protocolo.]
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h3 style="color: var(--amber); margin-bottom: 1rem; font-family: var(--font-mono); font-size: 0.9rem;">📋 HISTORIAL DE SESIÓN</h3>
+                <div id="sessionHistory" style="font-size: 0.85rem; color: var(--text-dim);">
+                    No hay procesamientos previos en esta sesión.
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: PROMPT -->
+        <section id="prompt" class="section">
+            <h2 class="section-title">Meta-Prompt Multipropósito v2.0</h2>
+            
+            <div class="alert">
+                <strong>INSTRUCCIÓN:</strong> Copia este prompt y úsalo en ChatGPT, Claude, Gemini o modelos open-source. 
+                Reemplaza <code>[INFORMACIÓN_ENTRADA]</code> con tu caso específico.
+            </div>
+
+            <div class="prompt-container">
+                <div class="prompt-header">
+                    <span>META-PROMPT-V2.ABR26</span>
+                    <div class="prompt-actions">
+                        <button class="icon-btn" onclick="copyPrompt(this)">📋 Copiar</button>
+                        <button class="icon-btn" onclick="downloadPrompt(this)">⬇ Descargar</button>
+                    </div>
+                </div>
+                <pre id="promptCode"><span class="code-comment"># META-PROMPT MULTIPROPÓSITO v2.0 - ABRIL 2026</span>
+
+<span class="code-keyword">Eres un</span> <span class="code-string">Colectivo de Expertos Especializados en Ingeniería de Prompts y Síntesis de Información</span>, 
+<span class="code-keyword">con roles adaptativos según el dominio de</span> [INFORMACIÓN_ENTRADA]. 
+<span class="code-keyword">Tu misión:</span> Analizar, estructurar, validar y entregar respuestas de máxima calidad, rigor y accionabilidad.
+
+<span class="code-comment">---</span>
+
+<span class="code-tag">## PROTOCOLO OBLIGATORIO (Ejecución Secuencial):</span>
+
+<span class="code-tag">### 1️⃣ ANÁLISIS INICIAL CON CADENA DE PENSAMIENTO</span>
+<span class="code-tag">&lt;analisis&gt;</span>
+- Resume [INFORMACIÓN_ENTRADA] en 3 bullets clave
+- Identifica: Objetivo principal | Audiencia | Restricciones | Complejidad (1-10)
+- Detecta gaps (información faltante) y plantea clarificaciones si es necesario
+- Enumera roles de expertos necesarios (ej: Analista de Datos, Estratega, Creativo)
+<span class="code-tag">&lt;/analisis&gt;</span>
+
+<span class="code-tag">### 2️⃣ VALIDACIÓN Y VERIFICACIÓN (Abril 2026)</span>
+<span class="code-tag">&lt;validacion&gt;</span>
+✅ <span class="code-keyword">VALIDACIÓN COMPLETA:</span> Verifica cada dato/afirmación contra:
+   - Fuentes actualizadas (último trim. 2026)
+   - Tendencias vigentes en tu campo
+   - Cambios regulatorios/tecnológicos post-2025
+   
+🛡️ <span class="code-keyword">SEGURIDAD VERIFICADA:</span> Identifica riesgos potenciales:
+   - Información obsoleta → Marca como <span class="code-string">"[PENDIENTE_VERIFICAR_2026]"</span>
+   - Sesgos en fuentes → Proporciona perspectivas alternativas
+   - Datos sensibles → Aplica privacidad/compliance
+   
+🔐 <span class="code-keyword">FIRMA DE TRAZABILIDAD:</span> Cada afirmación crítica incluye:
+   - [VERIFICADO_ABRIL_2026] o [REQUIERE_VALIDACIÓN]
+   - Fuente o metodología de verificación
+   - Fecha de última actualización conocida
+<span class="code-tag">&lt;/validacion&gt;</span>
+
+<span class="code-tag">### 3️⃣ ESTRUCTURA Y FORMATO OPTIMIZADO</span>
+<span class="code-tag">&lt;estructura&gt;</span>
+Organiza la respuesta así (adapta según tipo de salida):
+
+<span class="code-keyword">A) Resumen Ejecutivo</span> (1 párrafo, &lt;100 palabras)
+<span class="code-keyword">B) Hallazgos/Estructura Principal</span> (Usa tablas, listas numeradas, headers)
+<span class="code-keyword">C) Detalles por Rol de Experto</span> (Análisis desde cada perspectiva)
+<span class="code-keyword">D) Pasos Accionables</span> (3-5 acciones concretas, priorizadas, verificables)
+<span class="code-keyword">E) Riesgos Mitigados</span> (Qué problemas evitas con esta solución)
+<span class="code-keyword">F) Métricas de Éxito</span> (KPIs medibles, indicadores clave)
+
+<span class="code-keyword">Restricciones de formato:</span>
+- Máximo 2 niveles de anidación (evita listas complejas)
+- Código en bloques ```lenguaje```
+- Tablas para comparativas
+- Emojis solo para secciones clave (sin exceso)
+<span class="code-tag">&lt;/estructura&gt;</span>
+
+<span class="code-tag">### 4️⃣ ROBUSTEZ Y MÚLTIPLES VALIDACIONES</span>
+<span class="code-tag">&lt;robustez&gt;</span>
+🛡️ <span class="code-keyword">Aplica 3 capas de verificación:</span>
+
+1. <span class="code-keyword">Precisión:</span> ¿La respuesta responde directamente [INFORMACIÓN_ENTRADA]?
+   → Puntuación 1-100: ___/100 (justifica)
+   
+2. <span class="code-keyword">Completitud:</span> ¿Cubren todos los ángulos (técnico, ético, comercial, social)?
+   → Gaps identificados: [lista] → Soluciones propuestas: [lista]
+   
+3. <span class="code-keyword">Impacto Real:</span> ¿Son los pasos realmente accionables en abril 2026?
+   → Factibilidad: ___/100 | Tiempo estimado: ___ | Recursos necesarios: [lista]
+<span class="code-tag">&lt;/robustez&gt;</span>
+
+<span class="code-tag">### 5️⃣ AUTO-CRÍTICA Y EVOLUCIÓN (NO NEGOCIABLE)</span>
+<span class="code-tag">&lt;autocritica&gt;</span>
+🛑 <span class="code-keyword">ANTES DE FINALIZAR, evalúa tu propia respuesta:</span>
+
+❌ <span class="code-keyword">Errores detectados:</span>
+- ¿Hay contradicciones internas? → Resuélvelas
+- ¿Algún dato huele a alucinación IA? → Marca como [NO_VERIFICADO]
+- ¿Falta contexto crítico? → Añade o señala
+
+✅ <span class="code-keyword">Mejoras evolutivas (Versión 2.1):</span>
+- Propón 2 cambios específicos que refinarían esta respuesta
+- Sugiere preguntas de seguimiento para profundizar
+
+📈 <span class="code-keyword">Feedback Loop:</span>
+- "Para refinar esto aún más, proporciona: [pregunta específica]?"
+- "El próximo paso es validar esto contra [fuente/herramienta]"
+<span class="code-tag">&lt;/autocritica&gt;</span>
+
+<span class="code-tag">### 6️⃣ SALIDA FINAL ESTRUCTURADA</span>
+<span class="code-tag">&lt;salida_final&gt;</span>
+[AQUÍ VA TU RESPUESTA COMPLETA, estructurada según protocolo]
+
+<span class="code-comment">---</span>
+
+🔗 <span class="code-keyword">TRAZABILIDAD DIGITAL:</span>
+📅 <span class="code-keyword">FECHA DE VALIDACIÓN:</span> Abril 2026
+🛡️ <span class="code-keyword">ROBUSTEZ:</span> Validaciones múltiples ✓
+🎯 <span class="code-keyword">ACCIONABILIDAD:</span> Pasos concretos, priorizados ✓
+⚠️ <span class="code-keyword">RIESGOS MITIGADOS:</span> [listar 3-5 principales]
+
+<span class="code-keyword">Crítica de esta respuesta:</span>
+[Tu auto-evaluación sincera]
+
+<span class="code-comment">---
+&lt;/salida_final&gt;</span>
+
+<span class="code-comment">---</span>
+
+<span class="code-tag">## INSTRUCCIONES FINALES:</span>
+1. <span class="code-keyword">Riguroso, Exhaustivo, Claro:</span> No simplificar en exceso; mantén precisión técnica
+2. <span class="code-keyword">Termina siempre:</span> Marca fin explícitamente con ✓ RESPUESTA COMPLETA
+3. <span class="code-keyword">Adapta roles:</span> Si [INFORMACIÓN_ENTRADA] es código → Rol: Ingeniero Sr. Si es marketing → Rol: Estratega de Contenido, etc.
+4. <span class="code-keyword">Feedback continuo:</span> Invita a iterar
+
+<span class="code-comment">---</span>
+
+<span class="code-tag">## 🚀 CÓMO USAR ESTE PROMPT MEJORADO:</span>
+
+<span class="code-keyword">Paso 1:</span> Copia el prompt completo arriba  
+<span class="code-keyword">Paso 2:</span> Reemplaza [INFORMACIÓN_ENTRADA] con tu datos/idea/tarea  
+<span class="code-keyword">Paso 3:</span> Envía a ChatGPT, Claude o Gemini  
+<span class="code-keyword">Paso 4:</span> Recibe estructura optimizada + validación + auto-crítica  
+
+<span class="code-keyword">Ejemplo de uso:</span>
+[INFORMACIÓN_ENTRADA] = <span class="code-string">"Quiero crear una estrategia de contenido para LinkedIn dirigida a startups tech en 2026, presupuesto $5k/mes"</span></pre>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric">
+                    <div class="metric-value">6</div>
+                    <div class="metric-label">Fases Secuenciales</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">3</div>
+                    <div class="metric-label">Capas de Validación</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">100%</div>
+                    <div class="metric-label">Auto-Crítica Integrada</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">XML</div>
+                    <div class="metric-label">Estructura de Tags</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: PROTOCOL -->
+        <section id="protocol" class="section">
+            <h2 class="section-title">Protocolo de Ejecución Secuencial</h2>
+            
+            <div class="protocol-timeline">
+                <div class="step" data-step="0">
+                    <div class="step-title">PASO CERO: Clarificación de Input</div>
+                    <div class="step-desc">
+                        Antes de procesar, el sistema evalúa si la [ENTRADA] es suficientemente clara. 
+                        Si detecta ambigüedad, solicita aclaración antes de continuar. Mitiga procesamiento de datos vagos.
+                    </div>
+                    <div class="step-meta">
+                        <span class="tag">Input Validation</span>
+                        <span class="tag">Gap Detection</span>
+                    </div>
+                </div>
+
+                <div class="step" data-step="1">
+                    <div class="step-title">ANÁLISIS INICIAL (Cadena de Pensamiento Visible)</div>
+                    <div class="step-desc">
+                        Resume la entrada en 3 bullets clave. Identifica objetivo, audiencia, tono y restricciones. 
+                        Evalúa complejidad (simple/media/alta) con justificación. Establece roles de expertos necesarios.
+                    </div>
+                    <div class="step-meta">
+                        <span class="tag">Chain-of-Thought</span>
+                        <span class="tag">Context Mapping</span>
+                        <span class="tag">Complexity Scoring</span>
+                    </div>
+                </div>
+
+                <div class="step" data-step="2">
+                    <div class="step-title">VALIDACIÓN Y VERIFICACIÓN (Abril 2026)</div>
+                    <div class="step-desc">
+                        Verifica datos contra fuentes actualizadas (Q1-Q2 2026). Identifica información obsoleta y márcala como 
+                        [PENDIENTE_VERIFICAR_2026]. Aplica firma de trazabilidad digital a cada afirmación crítica.
+                    </div>
+                    <div class="step-meta">
+                        <span class="tag verified">[VERIFICADO_ABRIL_2026]</span>
+                        <span class="tag">Fact-Checking</span>
+                        <span class="tag">Compliance</span>
+                    </div>
+                </div>
+
+                <div class="step" data-step="3">
+                    <div class="step-title">GENERACIÓN ADAPTATIVA DE ESTRUCTURA</div>
+                    <div class="step-desc">
+                        Propón 3 opciones de estructura (básica, avanzada, creativa) con pros/contras. 
+                        Elige la óptima basada en claridad, accionabilidad y adaptabilidad a IA. Usa markdown para legibilidad máxima.
+                    </div>
+                    <div class="step-meta">
+                        <span class="tag">3 Opciones</span>
+                        <span class="tag">Comparativa</span>
+                        <span class="tag">Markdown Optimized</span>
+                    </div>
+                </div>
+
+                <div class="step" data-step="4">
+                    <div class="step-title">EJECUCIÓN CREATIVA Y EVOLUTIVA</div>
+                    <div class="step-desc">
+                        Llena la estructura con contenido innovador. Integra datos verificables, pasos priorizados y KPIs medibles. 
+                        Incluye variables parametrizables {público}, {presupuesto}, {idioma} para reutilización.
+                    </div>
+                    <div class="step-meta">
+                        <span class="tag">Parametrizable</span>
+                        <span class="tag">KPIs Medibles</span>
+                        <span class="tag">Innovación</span>
+                    </div>
+                </div>
+
+                <div class="step" data-step="5">
+                    <div class="step-title">ROBUSTEZ Y MÚLTIPLES VALIDACIONES</div>
+                    <div class="step-desc">
+                        Aplica 3 capas: Precisión (¿responde al input?), Completitud (¿cubre todos los ángulos?), 
+                        Impacto Real (¿es accionable hoy?). Puntuación 1-100 con justificación obligatoria.
+                    </div>
+                    <div class="step-meta">
+                        <span class="tag">Precisión</span>
+                        <span class="tag">Completitud</span>
+                        <span class="tag">Impacto Real</span>
+                    </div>
+                </div>
+
+                <div class="step" data-step="6">
+                    <div class="step-title">AUTO-CRÍTICA Y EVOLUCIÓN (NO NEGOCIABLE)</div>
+                    <div class="step-desc">
+                        Evalúa contradicciones internas, detecta alucinaciones IA, propone 2 mejoras evolutivas específicas. 
+                        Cierra con feedback loop para iteración continua. Marca fin explícito: ✓ RESPUESTA COMPLETA.
+                    </div>
+                    <div class="step-meta">
+                        <span class="tag">Self-Correction</span>
+                        <span class="tag">Iterative</span>
+                        <span class="tag">Non-Negotiable</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: COMPARE -->
+        <section id="compare" class="section">
+            <h2 class="section-title">Comparativa: Antes vs Después</h2>
+            
+            <div class="card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Aspecto</th>
+                            <th>Prompt Original</th>
+                            <th>Architecto v3.0</th>
+                            <th>Beneficio Clave</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Estructura</strong></td>
+                            <td>Lineal, sin flujo claro</td>
+                            <td>6 fases secuenciales con XML tags</td>
+                            <td>Ejecución ordenada, cero ambigüedad</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Validación</strong></td>
+                            <td>Genérica ("validación completa")</td>
+                            <td>3 capas cuantificables (1-100)</td>
+                            <td>Verificación rigurosa con métricas</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Autocrítica</strong></td>
+                            <td>Mencionada, no desarrollada</td>
+                            <td>Checklist explícito de errores + mejoras</td>
+                            <td>Refina antes de entregar</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Adaptabilidad</strong></td>
+                            <td>Estático</td>
+                            <td>Roles dinámicos + variables parametrizables</td>
+                            <td>Funciona para cualquier industria</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Accionabilidad</strong></td>
+                            <td>Pasos vagos</td>
+                            <td>KPIs, tiempo, recursos, factibilidad 1-100</td>
+                            <td>Ejecución inmediata sin interpretación</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Trazabilidad</strong></td>
+                            <td>Sellos genéricos desactualizados</td>
+                            <td>[VERIFICADO_ABRIL_2026] + fuente explícita</td>
+                            <td>Auditable, cumplimiento normativo</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Formato</strong></td>
+                            <td>Texto plano extenso</td>
+                            <td>Markdown estructurado, tablas, código</td>
+                            <td>Máxima legibilidad y parseabilidad</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="alert danger">
+                <strong>LIMITACIONES IDENTIFICADAS (Auto-Crítica Honesta):</strong><br><br>
+                1. <strong>Longitud:</strong> El prompt es extenso (800+ palabras). Para modelos con ventana de contexto limitada, 
+                usar solo secciones 1-3 + 5-6 para análisis rápidos.<br>
+                2. <strong>Dependencia del Input:</strong> Requiere [INFORMACIÓN_ENTRADA] clara. Si es vaga, el Paso Cero debe activar 
+                clarificación automática.<br>
+                3. <strong>Validez Temporal:</strong> "Verificado Abril 2026" expira post-Q2 2026. Incluir mecanismo de versionado 
+                (v2.0, v2.1) para evolución continua.
+            </div>
+        </section>
+
+        <!-- TAB: ECOSYSTEM -->
+        <section id="ecosystem" class="section">
+            <h2 class="section-title">Arquitectura HEXADATA Cloud</h2>
+
+            <div class="alert info">
+                <strong>DECISIÓN RECOMENDADA:</strong> arquitectura híbrida. Multi-repo para productos y un núcleo compartido para contratos, estándares, SDKs y lineamientos de seguridad.
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--amber); margin-bottom: 1rem;">Topología Organizacional</h3>
+                <p style="color: var(--text-dim); margin-bottom: 1rem;">
+                    La organización recomendada es <strong>hexadata-cloud</strong> con separación explícita entre producto, gobierno técnico e infraestructura.
+                </p>
+                <div class="repo-grid">
+                    <div class="repo-chip"><strong>hexadata-core</strong>Núcleo de orquestación, contratos internos y librerías base.</div>
+                    <div class="repo-chip"><strong>hexadata-security</strong>Políticas, auditoría, cumplimiento, hardening y controles.</div>
+                    <div class="repo-chip"><strong>hexadata-osint</strong>Inteligencia, correlación de señales y fuentes abiertas.</div>
+                    <div class="repo-chip"><strong>hexadata-authenticator</strong>Autenticación, identidad y trazabilidad de acceso.</div>
+                    <div class="repo-chip"><strong>hexadata-bi</strong>Dashboards, reporting y explotación analítica.</div>
+                    <div class="repo-chip"><strong>hexadata-architecture</strong>Repo central con diagramas, estándares y modelo operativo.</div>
+                    <div class="repo-chip"><strong>hexadata-api-contracts</strong>Schemas, OpenAPI, eventos y contratos de integración.</div>
+                    <div class="repo-chip"><strong>hexadata-infra</strong>IaC, entornos, redes, secretos y políticas de despliegue.</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--amber); margin-bottom: 1rem;">Naming y Estructura de Repos</h3>
+                <div class="processor-grid">
+                    <div>
+                        <div class="alert" style="margin-top: 0;">
+                            <strong>Convención:</strong> <code>hexadata-[dominio]</code><br>
+                            Sin sufijos ruidosos, sin versiones en el nombre y sin descripciones de marketing.
+                        </div>
+                        <table class="data-table" style="margin-top: 0.75rem;">
+                            <thead>
+                                <tr>
+                                    <th>Correcto</th>
+                                    <th>Evitar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>hexadata-core</td>
+                                    <td>hexa-data-cloud-super-ai-v2-final</td>
+                                </tr>
+                                <tr>
+                                    <td>hexadata-ident</td>
+                                    <td>project_diamante_new</td>
+                                </tr>
+                                <tr>
+                                    <td>hexadata-pay</td>
+                                    <td>repo_final_definitivo</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <div class="prompt-container" style="margin: 0;">
+                            <div class="prompt-header">
+                                <span>ESTRUCTURA BASE</span>
+                            </div>
+                            <pre>/src
+/tests
+/docs
+/examples
+/.github
+README.md
+LICENSE
+CONTRIBUTING.md
+CHANGELOG.md</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--amber); margin-bottom: 1rem;">Capas del Ecosistema</h3>
+                <div class="layer-stack">
+                    <div class="layer">
+                        <div class="layer-title">Experience</div>
+                        Dashboards, BI, interfaces operativas y superficies de usuario.
+                    </div>
+                    <div class="layer">
+                        <div class="layer-title">Intelligence</div>
+                        OSINT, AI, scoring, correlación analítica y motores de inferencia.
+                    </div>
+                    <div class="layer">
+                        <div class="layer-title">Security</div>
+                        Auth, monitoreo, política, auditoría, secretos y trazabilidad.
+                    </div>
+                    <div class="layer">
+                        <div class="layer-title">Core</div>
+                        Orquestación, procesamiento, contratos, colas y servicios compartidos.
+                    </div>
+                    <div class="layer">
+                        <div class="layer-title">Infrastructure</div>
+                        Storage, backup, cloud, redes, CI/CD, IaC y recuperación.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--amber); margin-bottom: 1rem;">Seguridad y Analítica de Visitas</h3>
+                <div class="security-grid">
+                    <div>
+                        <h4 style="color: var(--emerald); margin-bottom: 0.75rem;">Seguridad Aplicada</h4>
+                        <ul style="color: var(--text-dim); padding-left: 1.2rem; font-size: 0.9rem;">
+                            <li>Content Security Policy para limitar orígenes.</li>
+                            <li>Referrer policy estricta para reducir fuga de contexto.</li>
+                            <li>Eliminado el uso global de <code>target="_blank"</code> vía base tag.</li>
+                            <li>Correcciones en UI para no depender del objeto global <code>event</code>.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--cyan); margin-bottom: 0.75rem;">Rastreo Responsable</h4>
+                        <ul style="color: var(--text-dim); padding-left: 1.2rem; font-size: 0.9rem;">
+                            <li>No intenta identificar personas concretas.</li>
+                            <li>Clasifica solo origen agregado: Google, GitHub, comunidad, directo u otros.</li>
+                            <li>Solicita consentimiento antes de activar medición persistente.</li>
+                            <li>Permite activar Google Analytics 4 si luego lo configuras.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="telemetry-strip">
+                    <div class="telemetry-stat">
+                        <div class="telemetry-stat-value" id="telemetryConsentState">OFF</div>
+                        <div class="metric-label">Consentimiento</div>
+                    </div>
+                    <div class="telemetry-stat">
+                        <div class="telemetry-stat-value" id="telemetrySourceState">direct</div>
+                        <div class="metric-label">Origen Actual</div>
+                    </div>
+                    <div class="telemetry-stat">
+                        <div class="telemetry-stat-value" id="telemetryVisitCount">0</div>
+                        <div class="metric-label">Visitas Locales</div>
+                    </div>
+                    <div class="telemetry-stat">
+                        <div class="telemetry-stat-value" id="telemetryModeState">local</div>
+                        <div class="metric-label">Modo Métrico</div>
+                    </div>
+                    <div class="telemetry-stat">
+                        <div class="telemetry-stat-value" id="telemetryGoogleCount">0</div>
+                        <div class="metric-label">Google</div>
+                    </div>
+                    <div class="telemetry-stat">
+                        <div class="telemetry-stat-value" id="telemetryGithubCount">0</div>
+                        <div class="metric-label">GitHub</div>
+                    </div>
+                    <div class="telemetry-stat">
+                        <div class="telemetry-stat-value" id="telemetryCommunityCount">0</div>
+                        <div class="metric-label">Comunidad</div>
+                    </div>
+                </div>
+
+                <div class="alert info" style="margin-top: 1rem;">
+                    <strong>IMPORTANTE:</strong> GitHub no expone la identidad de quienes visitan un repositorio. Si quieres métricas reales de visitantes, debes medir la landing o documentación publicada y trabajar con datos agregados. Este sitio ya queda preparado para eso.
+                </div>
+            </div>
+        </section>
+
+        <section id="interest" class="section">
+            <h2 class="section-title">Solicitud de Información</h2>
+
+            <div class="alert info">
+                <strong>Solicitud de información:</strong> completa este formulario para recibir detalles de la solución que necesitas. Te responderemos con la información técnica y funcional correspondiente.
+            </div>
+
+            <div class="interest-grid">
+                <div class="card">
+                    <h3 style="color: var(--amber); margin-bottom: 1rem;">Embudo de Interés Recomendado</h3>
+                    <div class="signal-list">
+                        <div class="signal-item">
+                            <strong>1. Descubrimiento</strong>
+                            La landing explica el ecosistema, seguridad, repos y capacidades sin fricción comercial agresiva.
+                        </div>
+                        <div class="signal-item">
+                            <strong>2. Intención</strong>
+                            Quien necesita algo solicita información con un caso de uso, prioridad y medio de contacto.
+                        </div>
+                        <div class="signal-item">
+                            <strong>3. Calificación</strong>
+                            Tú recibes una ficha uniforme para distinguir curiosidad, piloto, implementación o alianza.
+                        </div>
+                        <div class="signal-item">
+                            <strong>4. Respuesta</strong>
+                            Respondes con material, demo, propuesta técnica o agenda de llamada según criticidad.
+                        </div>
+                    </div>
+
+                    <div class="alert" style="margin-top: 1rem;">
+                        <strong>MODELO SEGURO:</strong> este formulario no expone una base de datos ni almacena PII en servidor. Genera una solicitud estructurada por correo o copia local para que tú la gestiones.
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: var(--amber); margin-bottom: 1rem;">Solicitar Información</h3>
+                    <form class="interest-form" id="interestForm">
+                        <div class="sr-only" aria-hidden="true">
+                            <label for="interestWebsite">Website</label>
+                            <input id="interestWebsite" name="interestWebsite" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" for="interestName">Nombre o alias</label>
+                            <input class="field-input" id="interestName" name="interestName" maxlength="80" placeholder="Ej. Francisco Caballero" required>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" for="interestEmail">Correo de contacto</label>
+                            <input class="field-input" id="interestEmail" name="interestEmail" type="email" maxlength="120" placeholder="tu-correo@dominio.com" required>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" for="interestOrg">Organización o proyecto</label>
+                            <input class="field-input" id="interestOrg" name="interestOrg" maxlength="100" placeholder="Startup, empresa o iniciativa">
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" for="interestSolution">Solución de interés</label>
+                            <select class="field-select" id="interestSolution" name="interestSolution" required>
+                                <option value="">Selecciona una opción</option>
+                                <option value="hexadata-core">HEXADATA Core</option>
+                                <option value="hexadata-security">HEXADATA Security</option>
+                                <option value="hexadata-osint">HEXADATA OSINT</option>
+                                <option value="hexadata-bi">HEXADATA BI</option>
+                                <option value="hexadata-authenticator">HEXADATA Authenticator</option>
+                                <option value="arquitectura-ecosistema">Arquitectura del ecosistema</option>
+                                <option value="otra">Otra / solución compuesta</option>
+                            </select>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" for="interestPriority">Nivel de interés</label>
+                            <select class="field-select" id="interestPriority" name="interestPriority" required>
+                                <option value="">Selecciona prioridad</option>
+                                <option value="exploracion">Exploración</option>
+                                <option value="piloto">Piloto</option>
+                                <option value="implementacion">Implementación</option>
+                                <option value="alianza">Alianza / partnership</option>
+                            </select>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" for="interestNeed">Qué necesitan exactamente</label>
+                            <textarea class="field-textarea" id="interestNeed" name="interestNeed" maxlength="1500" placeholder="Describe el problema, el contexto, el plazo y qué información quieres recibir." required></textarea>
+                        </div>
+
+                        <label class="checkbox-row" for="interestConsent">
+                            <input id="interestConsent" name="interestConsent" type="checkbox" required>
+                            <span>Acepto compartir mis datos de contacto para recibir respuesta sobre esta solicitud. No autorizo uso distinto sin consentimiento adicional.</span>
+                        </label>
+
+                        <div class="interest-actions">
+                            <button class="btn" type="button" onclick="submitInterestRequest()">Enviar solicitud</button>
+                            <button class="btn btn-secondary" type="button" onclick="copyInterestRequest()">Copiar solicitud</button>
+                            <button class="btn btn-secondary" type="reset" onclick="resetInterestStatus()">Limpiar</button>
+                        </div>
+
+                        <div class="inline-status" id="interestStatus">Completa la ficha para generar una solicitud estructurada.</div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: IMPLEMENT -->
+        <section id="implement" class="section">
+            <h2 class="section-title">Guía de Implementación Técnica</h2>
+
+            <div class="card">
+                <h3 style="color: var(--amber); margin-bottom: 1rem;">Arquitectura Recomendada</h3>
+                <p style="color: var(--text-dim); margin-bottom: 1.5rem;">
+                    Enfoque híbrido: Meta-Prompt orquestando modelos open-source locales + conectores web para verificación en tiempo real.
+                </p>
+
+                <div style="background: var(--void); border: 1px solid var(--border); padding: 1.5rem; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.8;">
+<div style="color: var(--text-dim);"># STACK TECNOLÓGICO SUGERIDO</div>
+<div><span style="color: var(--rose);">orquestador:</span> <span style="color: var(--emerald);">"Architecto Evolutivo v3.0"</span> (meta-prompt)</div>
+<div><span style="color: var(--rose);">modelo_local:</span> <span style="color: var(--emerald);">"Llama-3-70B / Qwen2.5-72B / Mistral-Large"</span></div>
+<div><span style="color: var(--rose);">verificacion_web:</span> <span style="color: var(--emerald);">"BrightData SERP API + Scraping propio"</span></div>
+<div><span style="color: var(--rose);">almacenamiento:</span> <span style="color: var(--emerald);">"Vector DB (Chroma/Pinecone) para RAG"</span></div>
+<div><span style="color: var(--rose);">validacion:</span> <span style="color: var(--emerald);">"Pipeline de verificación cruzada 2 fuentes"</span></div>
+                </div>
+            </div>
+
+            <div class="processor-grid" style="margin-top: 1.5rem;">
+                <div class="card">
+                    <h4 style="color: var(--emerald); margin-bottom: 1rem;">✓ Ventajas Open-Source Local</h4>
+                    <ul style="color: var(--text-dim); padding-left: 1.2rem; font-size: 0.9rem;">
+                        <li>Control total de datos (sin registro externo)</li>
+                        <li>Coste predecible (infra propia)</li>
+                        <li>Personalización de fine-tuning</li>
+                        <li>Cumplimiento GDPR/HIPAA viable</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 style="color: var(--rose); margin-bottom: 1rem;">⚠ Riesgos y Mitigaciones</h4>
+                    <ul style="color: var(--text-dim); padding-left: 1.2rem; font-size: 0.9rem;">
+                        <li><strong>Alucinaciones:</strong> Siempre marcar [PENDIENTE_VERIFICAR]</li>
+                        <li><strong>Datos obsoletos:</strong> RAG + APIs SERP en tiempo real</li>
+                        <li><strong>Face Search/OSINT:</strong> Cumplimiento legal estricto, consentimiento explícito</li>
+                        <li><strong>Costes scraping:</strong> Monitorizar CPM/GB, alertas de saldo</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <h3 style="color: var(--amber); margin-bottom: 1rem;">Próximos Pasos Concretos</h3>
+                <div class="protocol-timeline" style="padding-left: 1.5rem;">
+                    <div class="step" data-step="1" style="margin-bottom: 1rem;">
+                        <div class="step-title" style="font-size: 1rem;">Generar Meta-Prompt Final</div>
+                        <div class="step-desc">Limpiar, modularizar y versionar el prompt v3.0 listo para copiar.</div>
+                    </div>
+                    <div class="step" data-step="2" style="margin-bottom: 1rem;">
+                        <div class="step-title" style="font-size: 1rem;">Configurar Orquestador</div>
+                        <div class="step-desc">Elegir modelo open-source + conectar APIs scraping/serp para verificación RAG.</div>
+                    </div>
+                    <div class="step" data-step="3" style="margin-bottom: 1rem;">
+                        <div class="step-title" style="font-size: 1rem;">Prueba Piloto 7 Días</div>
+                        <div class="step-desc">10 casos reales. Medir precisión, coste y latencia. Ajustar parámetros.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="consent-banner hidden" id="consentBanner">
+        <span class="status-pill">Telemetría responsable</span>
+        <p>
+            Este sitio puede registrar visitas de forma agregada para distinguir tráfico directo, Google, GitHub o comunidad. No identifica personas y solo activa persistencia con tu consentimiento.
+        </p>
+        <div class="consent-actions">
+            <button class="btn" onclick="acceptTelemetry()">Aceptar métricas</button>
+            <button class="btn btn-secondary" onclick="declineTelemetry()">Rechazar</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div style="margin-bottom: 0.5rem;">
+                ARCHITECTO EVOLUTIVO v3.0 | ABRIL 2026
+            </div>
+            <div style="font-size: 0.7rem; color: var(--text-dim);">
+                TRAZABILIDAD: AE-2026-04-19-V3 | VALIDACIÓN COMPLETA | SEGURIDAD VERIFICADA
+            </div>
+            <div style="margin-top: 1rem; font-size: 0.7rem;">
+                ✓ RESPUESTA COMPLETA Y VERIFICADA
+            </div>
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                <span class="status-pill">Security: Hardened</span>
+                <span class="status-pill">Analytics: Consent Based</span>
+                <span class="status-pill">Tracking: Aggregated Sources Only</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const analyticsConfig = {
+            // Si publicas este HTML y quieres métricas agregadas reales, coloca aquí tu ID de GA4.
+            googleAnalyticsId: '',
+            consentStorageKey: 'hexa.telemetry.consent',
+            statsStorageKey: 'hexa.telemetry.stats'
+        };
+
+        const contactConfig = {
+            contactUserCodes: [102, 99, 111, 46, 99, 97, 98, 97, 108, 108, 101, 114, 111, 56, 51],
+            contactDomainCodes: [103, 109, 97, 105, 108, 46, 99, 111, 109],
+            contactSubjectPrefix: 'Interés HEXADATA'
+        };
+
+        const deliveryConfig = {
+            endpointUrl: '',
+            endpointMode: 'auto'
+        };
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function getTelemetryConsent() {
+            return localStorage.getItem(analyticsConfig.consentStorageKey);
+        }
+
+        function setTelemetryConsent(value) {
+            localStorage.setItem(analyticsConfig.consentStorageKey, value);
+        }
+
+        function readTelemetryStats() {
+            try {
+                return JSON.parse(localStorage.getItem(analyticsConfig.statsStorageKey)) || {
+                    totalVisits: 0,
+                    bySource: {}
+                };
+            } catch {
+                return { totalVisits: 0, bySource: {} };
+            }
+        }
+
+        function writeTelemetryStats(stats) {
+            localStorage.setItem(analyticsConfig.statsStorageKey, JSON.stringify(stats));
+        }
+
+        function trackInterestEvent(payload) {
+            const stats = readTelemetryStats();
+            stats.interestRequests = (stats.interestRequests || 0) + 1;
+            stats.lastInterestSolution = payload.solution;
+            writeTelemetryStats(stats);
+
+            if (getTelemetryConsent() === 'accepted' && analyticsConfig.googleAnalyticsId && window.gtag) {
+                window.gtag('event', 'generate_lead', {
+                    lead_solution: payload.solution,
+                    lead_priority: payload.priority
+                });
+            }
+        }
+
+        function resolveContactEmail() {
+            const user = String.fromCharCode(...contactConfig.contactUserCodes);
+            const domain = String.fromCharCode(...contactConfig.contactDomainCodes);
+            return `${user}@${domain}`;
+        }
+
+        function getInterestFormValues() {
+            return {
+                name: escapeHtml(document.getElementById('interestName').value.trim()),
+                email: escapeHtml(document.getElementById('interestEmail').value.trim()),
+                organization: escapeHtml(document.getElementById('interestOrg').value.trim()),
+                solution: escapeHtml(document.getElementById('interestSolution').value.trim()),
+                priority: escapeHtml(document.getElementById('interestPriority').value.trim()),
+                need: escapeHtml(document.getElementById('interestNeed').value.trim())
+            };
+        }
+
+        function validateInterestForm(payload) {
+            const consentAccepted = document.getElementById('interestConsent').checked;
+            const honeypotValue = document.getElementById('interestWebsite').value.trim();
+            if (honeypotValue) {
+                return 'No se pudo validar la solicitud.';
+            }
+            if (!payload.name || !payload.email || !payload.solution || !payload.priority || !payload.need) {
+                return 'Completa nombre, correo, solución, prioridad y necesidad.';
+            }
+            if (!consentAccepted) {
+                return 'Debes aceptar el uso de contacto para responder tu solicitud.';
+            }
+            return '';
+        }
+
+        function buildInterestMessage(payload) {
+            return [
+                'SOLICITUD DE INFORMACION | HEXADATA',
+                '',
+                `Nombre: ${payload.name}`,
+                `Correo: ${payload.email}`,
+                `Organizacion: ${payload.organization || 'No especificada'}`,
+                `Solucion de interes: ${payload.solution}`,
+                `Nivel de interes: ${payload.priority}`,
+                '',
+                'Necesidad:',
+                payload.need,
+                '',
+                `Origen detectado: ${detectTrafficSource()}`,
+                `Fecha local: ${new Date().toLocaleString('es-ES')}`
+            ].join('\n');
+        }
+
+        function setInterestStatus(message, tone) {
+            const status = document.getElementById('interestStatus');
+            status.textContent = message;
+            status.style.color = tone === 'ok' ? 'var(--emerald)' : tone === 'warn' ? 'var(--amber)' : 'var(--text-dim)';
+        }
+
+        async function submitInterestToEndpoint(payload, subject, message) {
+            if (!deliveryConfig.endpointUrl) {
+                return false;
+            }
+
+            const response = await fetch(deliveryConfig.endpointUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    subject,
+                    source: detectTrafficSource(),
+                    submittedAt: new Date().toISOString(),
+                    payload,
+                    message
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Endpoint error ${response.status}`);
+            }
+
+            return true;
+        }
+
+        async function submitInterestRequest() {
+            const payload = getInterestFormValues();
+            const validationError = validateInterestForm(payload);
+            if (validationError) {
+                setInterestStatus(validationError, 'warn');
+                return;
+            }
+
+            const subject = `${contactConfig.contactSubjectPrefix} | ${payload.solution} | ${payload.priority}`;
+            const message = buildInterestMessage(payload);
+            trackInterestEvent(payload);
+
+            try {
+                const deliveredToEndpoint = await submitInterestToEndpoint(payload, subject, message);
+                if (deliveredToEndpoint) {
+                    setInterestStatus('Solicitud enviada al gateway privado correctamente.', 'ok');
+                    document.getElementById('interestForm').reset();
+                    return;
+                }
+            } catch (error) {
+                setInterestStatus('El gateway privado no respondió. Uso canal alternativo.', 'warn');
+            }
+
+            const contactEmail = resolveContactEmail();
+            if (contactEmail && deliveryConfig.endpointMode !== 'endpoint-only') {
+                const mailtoUrl = `mailto:${encodeURIComponent(contactEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+                window.location.href = mailtoUrl;
+                setInterestStatus('Solicitud preparada en tu cliente de correo.', 'ok');
+                return;
+            }
+
+            navigator.clipboard.writeText(message).then(() => {
+                setInterestStatus('Solicitud copiada al portapapeles para canal alternativo.', 'ok');
+            }).catch(() => {
+                setInterestStatus('No se pudo enviar automáticamente. Copia manualmente la solicitud desde el formulario.', 'warn');
+            });
+        }
+
+        function copyInterestRequest() {
+            const payload = getInterestFormValues();
+            const validationError = validateInterestForm(payload);
+            if (validationError) {
+                setInterestStatus(validationError, 'warn');
+                return;
+            }
+
+            const message = buildInterestMessage(payload);
+            navigator.clipboard.writeText(message).then(() => {
+                trackInterestEvent(payload);
+                setInterestStatus('Solicitud copiada al portapapeles.', 'ok');
+            }).catch(() => {
+                setInterestStatus('No se pudo copiar automáticamente la solicitud.', 'warn');
+            });
+        }
+
+        function resetInterestStatus() {
+            setInterestStatus('Completa la ficha para generar una solicitud estructurada.', 'neutral');
+        }
+
+        function detectTrafficSource() {
+            const referrer = document.referrer.toLowerCase();
+            if (!referrer) return 'direct';
+            if (referrer.includes('google.')) return 'google';
+            if (referrer.includes('github.com')) return 'github';
+            if (referrer.includes('community') || referrer.includes('discord') || referrer.includes('reddit') || referrer.includes('linkedin.')) return 'community';
+            return 'other';
+        }
+
+        function updateTelemetryUI(source, stats, modeLabel) {
+            document.getElementById('telemetryConsentState').textContent = getTelemetryConsent() === 'accepted' ? 'ON' : 'OFF';
+            document.getElementById('telemetrySourceState').textContent = source;
+            document.getElementById('telemetryVisitCount').textContent = String(stats.totalVisits || 0);
+            document.getElementById('telemetryModeState').textContent = modeLabel;
+            document.getElementById('telemetryGoogleCount').textContent = String((stats.bySource && stats.bySource.google) || 0);
+            document.getElementById('telemetryGithubCount').textContent = String((stats.bySource && stats.bySource.github) || 0);
+            document.getElementById('telemetryCommunityCount').textContent = String((stats.bySource && stats.bySource.community) || 0);
+        }
+
+        function loadGoogleAnalytics() {
+            if (!analyticsConfig.googleAnalyticsId || document.getElementById('ga4-script')) return;
+            const script = document.createElement('script');
+            script.id = 'ga4-script';
+            script.async = true;
+            script.src = `https://www.googletagmanager.com/gtag/js?id=${analyticsConfig.googleAnalyticsId}`;
+            document.head.appendChild(script);
+
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function() { dataLayer.push(arguments); };
+            gtag('js', new Date());
+            gtag('config', analyticsConfig.googleAnalyticsId, {
+                anonymize_ip: true,
+                allow_google_signals: false,
+                allow_ad_personalization_signals: false
+            });
+        }
+
+        function trackVisit() {
+            const source = detectTrafficSource();
+            const consent = getTelemetryConsent();
+            const stats = readTelemetryStats();
+
+            if (consent === 'accepted') {
+                stats.totalVisits += 1;
+                stats.bySource[source] = (stats.bySource[source] || 0) + 1;
+                writeTelemetryStats(stats);
+                if (analyticsConfig.googleAnalyticsId) {
+                    loadGoogleAnalytics();
+                    if (window.gtag) {
+                        window.gtag('event', 'page_view', {
+                            page_title: document.title,
+                            traffic_source_group: source,
+                            page_location: window.location.href
+                        });
+                    }
+                }
+            }
+
+            updateTelemetryUI(source, stats, analyticsConfig.googleAnalyticsId ? 'ga4' : 'local');
+        }
+
+        function acceptTelemetry() {
+            setTelemetryConsent('accepted');
+            document.getElementById('consentBanner').classList.add('hidden');
+            trackVisit();
+        }
+
+        function declineTelemetry() {
+            setTelemetryConsent('declined');
+            document.getElementById('consentBanner').classList.add('hidden');
+            updateTelemetryUI(detectTrafficSource(), readTelemetryStats(), 'local');
+        }
+
+        function initializeTelemetry() {
+            const consent = getTelemetryConsent();
+            if (!consent) {
+                document.getElementById('consentBanner').classList.remove('hidden');
+            } else {
+                trackVisit();
+            }
+        }
+
+        function setOutputPlaceholder() {
+            document.getElementById('outputContent').innerHTML = '<div style="color: var(--text-dim); text-align: center; padding-top: 4rem; font-style: italic;">[Sistema listo. Agrega ideas en el panel izquierdo y ejecuta el protocolo.]</div>';
+        }
+
+        // Tab Switching
+        function switchTab(tabId, tabButton) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if (tabButton) {
+                tabButton.classList.add('active');
+            }
+        }
+
+        // Copy Prompt
+        function copyPrompt(button) {
+            const promptText = document.getElementById('promptCode').innerText;
+            navigator.clipboard.writeText(promptText).then(() => {
+                const btn = button;
+                const original = btn.innerText;
+                btn.innerText = '✓ Copiado';
+                btn.style.borderColor = 'var(--emerald)';
+                btn.style.color = 'var(--emerald)';
+                setTimeout(() => {
+                    btn.innerText = original;
+                    btn.style.borderColor = '';
+                    btn.style.color = '';
+                }, 2000);
+            });
+        }
+
+        // Download Prompt
+        function downloadPrompt(button) {
+            const promptText = document.getElementById('promptCode').innerText;
+            const blob = new Blob([promptText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'meta-prompt-v2-abril2026.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Clear All
+        function clearAll() {
+            document.getElementById('rawInput').value = '';
+            setOutputPlaceholder();
+            document.getElementById('statusPrecision').className = 'status-item';
+            document.getElementById('statusPrecision').innerText = 'PRECISIÓN: --';
+            document.getElementById('statusCompleteness').className = 'status-item';
+            document.getElementById('statusCompleteness').innerText = 'COMPLETITUD: --';
+            document.getElementById('statusImpact').className = 'status-item';
+            document.getElementById('statusImpact').innerText = 'IMPACTO: --';
+        }
+
+        // Process Ideas (Simulation of the Architect Protocol)
+        function processIdeas() {
+            const input = document.getElementById('rawInput').value.trim();
+            const output = document.getElementById('outputContent');
+            
+            if (!input) {
+                alert('Por favor, ingresa ideas desordenadas en el panel izquierdo.');
+                return;
+            }
+
+            // Reset status
+            output.innerHTML = '<div style="text-align: center; padding-top: 3rem;"><div class="typing" style="color: var(--amber); font-family: var(--font-mono);">Iniciando Protocolo Architecto...</div></div>';
+            
+            // Simulate processing steps
+            setTimeout(() => {
+                output.innerHTML = '<div style="text-align: center; padding-top: 3rem;"><div class="typing" style="color: var(--amber); font-family: var(--font-mono);">Fase 1/6: Análisis de entrada y detección de gaps...</div></div>';
+            }, 800);
+
+            setTimeout(() => {
+                output.innerHTML = '<div style="text-align: center; padding-top: 3rem;"><div class="typing" style="color: var(--amber); font-family: var(--font-mono);">Fase 2/6: Validación temporal y verificación de fuentes...</div></div>';
+            }, 1800);
+
+            setTimeout(() => {
+                output.innerHTML = '<div style="text-align: center; padding-top: 3rem;"><div class="typing" style="color: var(--amber); font-family: var(--font-mono);">Fase 3/6: Generando estructuras adaptativas...</div></div>';
+            }, 2800);
+
+            setTimeout(() => {
+                // Generate structured output based on input analysis
+                const structured = generateStructuredOutput(input);
+                output.innerHTML = structured.html;
+                
+                // Update metrics
+                document.getElementById('statusPrecision').innerText = `PRECISIÓN: ${structured.metrics.precision}/100`;
+                document.getElementById('statusPrecision').className = 'status-item valid';
+                document.getElementById('statusCompleteness').innerText = `COMPLETITUD: ${structured.metrics.completeness}/100`;
+                document.getElementById('statusCompleteness').className = 'status-item valid';
+                document.getElementById('statusImpact').innerText = `IMPACTO: ${structured.metrics.impact}/100`;
+                document.getElementById('statusImpact').className = 'status-item valid';
+
+                // Add to history
+                addToHistory(input.substring(0, 50) + '...', structured.metrics);
+            }, 4000);
+        }
+
+        function generateStructuredOutput(input) {
+            // Simple heuristic analysis to simulate the Architect
+            const words = input.split(/\s+/).length;
+            const hasBudget = /\$\d|presupuesto|costo|dinero|inversión/i.test(input);
+            const hasAudience = /audiencia|público|cliente|usuario|startup|empresa/i.test(input);
+            const hasGoal = /objetivo|meta|quiero|necesito|plan|estrategia/i.test(input);
+            const hasTime = /fecha|plazo|tiempo|mes|semana|día/i.test(input);
+            
+            let complexity = Math.min(10, Math.ceil(words / 15) + (hasBudget ? 2 : 0) + (hasAudience ? 2 : 0));
+            let precision = Math.min(98, 70 + (hasGoal ? 15 : 0) + (hasAudience ? 10 : 0) + (hasBudget ? 3 : 0));
+            let completeness = Math.min(97, 65 + (hasBudget ? 10 : 0) + (hasTime ? 10 : 0) + (hasAudience ? 12 : 0));
+            let impact = Math.min(96, 60 + (hasGoal ? 20 : 0) + (hasBudget ? 10 : 0) + (hasTime ? 6 : 0));
+
+            // Detect domain
+            let domain = 'General';
+            if (/código|programar|app|software|api|backend|frontend/i.test(input)) domain = 'Tecnología/Desarrollo';
+            else if (/marketing|contenido|linkedin|redes|publicidad|marca/i.test(input)) domain = 'Marketing/Digital';
+            else if (/negocio|empresa|startup|inversión|ventas|cliente/i.test(input)) domain = 'Negocios/Estrategia';
+            else if (/diseño|ui|ux|interfaz|visual|marca/i.test(input)) domain = 'Diseño/Creativo';
+
+            const roles = [];
+            if (domain === 'Tecnología/Desarrollo') roles.push('Arquitecto de Software', 'Ingeniero de Prompts', 'Analista de Seguridad');
+            else if (domain === 'Marketing/Digital') roles.push('Estratega de Contenido', 'Analista de Growth', 'Especialista en Marca');
+            else if (domain === 'Negocios/Estrategia') roles.push('Consultor Estratégico', 'Analista Financiero', 'Especialista en Operaciones');
+            else roles.push('Analista Generalista', 'Estratega', 'Validador de Contenido');
+
+            const gaps = [];
+            if (!hasBudget) gaps.push('Presupuesto no especificado → Se asume escenario lean');
+            if (!hasTime) gaps.push('Timeline no definida → Se propone roadmap de 90 días');
+            if (!hasAudience) gaps.push('Audiencia objetivo ambigua → Se requiere segmentación');
+
+            const actions = [
+                'Definir objetivo SMART basado en el input analizado',
+                hasBudget ? 'Asignar presupuesto a canales prioritarios' : 'Establecer presupuesto mínimo viable',
+                hasAudience ? 'Crear buyer persona detallado' : 'Investigar y definir audiencia objetivo',
+                'Establecer KPIs de seguimiento semanal',
+                'Programar revisión de validación en Q2 2026'
+            ];
+
+            const risks = [
+                'Información de mercado puede requerir actualización post-abril 2026',
+                'Dependencia de validación externa para datos financieros',
+                'Escalabilidad sujeta a recursos confirmados'
+            ];
+
+            const html = `
+                <h4>📊 Resumen Ejecutivo</h4>
+                <p style="margin-bottom: 1rem;">Input de <strong>${words} palabras</strong> clasificado como dominio <span class="tag">${domain}</span> 
+                con complejidad <strong>${complexity}/10</strong>. Se detectaron ${gaps.length} gaps críticos que requieren atención.</p>
+
+                <h4>🎯 Análisis Inicial</h4>
+                <ul>
+                    <li><strong>Objetivo inferido:</strong> ${hasGoal ? 'Explícito en entrada' : 'Requiere clarificación (Paso Cero activado)'}</li>
+                    <li><strong>Audiencia detectada:</strong> ${hasAudience ? 'Mencionada explícitamente' : 'No especificada → Gap identificado'}</li>
+                    <li><strong>Restricciones:</strong> ${hasBudget ? 'Presupuesto definido' : 'Sin restricción financiera declarada'} | ${hasTime ? 'Timeline presente' : 'Sin fecha límite'}</li>
+                </ul>
+
+                <h4>👥 Roles de Expertos Asignados</h4>
+                <div style="margin-bottom: 1rem;">
+                    ${roles.map(r => `<span class="tag verified">${r}</span>`).join('')}
+                </div>
+
+                <h4>⚠️ Gaps Detectados</h4>
+                <ul>
+                    ${gaps.map(g => `<li>${g}</li>`).join('')}
+                    ${gaps.length === 0 ? '<li>Sin gaps críticos detectados</li>' : ''}
+                </ul>
+
+                <h4>📋 Estructura Recomendada</h4>
+                <p style="margin-bottom: 0.5rem;"><strong>Opción Óptima:</strong> Avanzada (equilibrio entre profundidad y velocidad de ejecución)</p>
+                <ul>
+                    <li>Formato: Documento ejecutivo con anexos técnicos</li>
+                    <li>Priorización: Por impacto/coste usando matriz Eisenhower</li>
+                    <li>Variables: {presupuesto}, {timeline}, {audiencia}, {canal_principal}</li>
+                </ul>
+
+                <h4>🚀 Pasos Accionables Priorizados</h4>
+                <ol style="margin-left: 1.2rem; color: var(--text-dim);">
+                    ${actions.map((a, i) => `<li style="margin-bottom: 0.4rem;"><strong>${i+1}.</strong> ${a}</li>`).join('')}
+                </ol>
+
+                <h4>🛡️ Riesgos Mitigados</h4>
+                <ul>
+                    ${risks.map(r => `<li>${r} <span class="tag">[PENDIENTE_VERIFICAR_2026]</span></li>`).join('')}
+                </ul>
+
+                <h4>📈 Métricas de Éxito Propuestas</h4>
+                <ul>
+                    <li>KPI Principal: Validación de hipótesis inicial en 14 días</li>
+                    <li>KPI Secundario: Documentación de requisitos al 100%</li>
+                    <li>Meta de eficiencia: Reducción de 40% en tiempo de planificación vs método tradicional</li>
+                </ul>
+
+                <h4>🔁 Feedback Loop</h4>
+                <p style="color: var(--text-dim); font-style: italic;">
+                    "Para refinar esta estructura, proporciona: ¿tienes restricciones técnicas específicas? 
+                    ¿Existe un stack tecnológico preferido? El siguiente paso es validar contra fuentes de mercado Q2 2026."
+                </p>
+
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--text-dim); font-family: var(--font-mono);">
+                    <div>🔗 TRAZABILIDAD: AE-PROC-${Date.now().toString().slice(-6)}</div>
+                    <div>📅 FECHA: Abril 2026 | 🛡️ ROBUSTEZ: 3 capas aplicadas</div>
+                    <div style="margin-top: 0.5rem; color: var(--emerald);">✓ RESPUESTA COMPLETA</div>
+                </div>
+            `;
+
+            return { html, metrics: { precision, completeness, impact } };
+        }
+
+        function addToHistory(preview, metrics) {
+            const historyDiv = document.getElementById('sessionHistory');
+            const time = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+            
+            if (historyDiv.innerText.includes('No hay procesamientos')) {
+                historyDiv.textContent = '';
+            }
+
+            const entry = document.createElement('div');
+            entry.style.cssText = 'padding: 0.75rem; border-left: 2px solid var(--amber); margin-bottom: 0.75rem; background: rgba(245,158,11,0.05);';
+            const metaRow = document.createElement('div');
+            metaRow.style.cssText = 'display: flex; justify-content: space-between; margin-bottom: 0.25rem;';
+
+            const timeLabel = document.createElement('span');
+            timeLabel.style.cssText = 'color: var(--amber); font-family: var(--font-mono); font-size: 0.75rem;';
+            timeLabel.textContent = time;
+
+            const metricsLabel = document.createElement('span');
+            metricsLabel.style.cssText = 'color: var(--emerald); font-size: 0.75rem;';
+            metricsLabel.textContent = `P:${metrics.precision} C:${metrics.completeness} I:${metrics.impact}`;
+
+            const previewRow = document.createElement('div');
+            previewRow.style.cssText = 'font-size: 0.8rem; color: var(--text-dim);';
+            previewRow.textContent = preview;
+
+            metaRow.appendChild(timeLabel);
+            metaRow.appendChild(metricsLabel);
+            entry.appendChild(metaRow);
+            entry.appendChild(previewRow);
+            
+            historyDiv.insertBefore(entry, historyDiv.firstChild);
+        }
+
+        // Auto-resize textarea
+        document.getElementById('rawInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.max(300, this.scrollHeight) + 'px';
+        });
+
+        setOutputPlaceholder();
+        initializeTelemetry();
+    </script>
+</body>
+</html>

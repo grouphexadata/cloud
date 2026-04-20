@@ -1,0 +1,31 @@
+C4Context
+    title HEXADATA Cloud - System Context
+
+    Person(architect, "Arquitecto", "Define estrategia, gobierno tecnico y roadmap")
+    Person(operator, "Operador", "Consume dashboards y ejecuta operaciones")
+    Person(securityLead, "Security Lead", "Gestiona riesgo y cumplimiento")
+
+    System_Boundary(hexadata, "HEXADATA Cloud") {
+        System(core, "hexadata-core", "Orquestacion y procesamiento central")
+        System(security, "hexadata-security", "Controles, auditoria, cumplimiento")
+        System(osint, "hexadata-osint", "Inteligencia y correlacion de fuentes")
+        System(contracts, "hexadata-api-contracts", "Schemas y contratos de integracion")
+        System(sdk, "hexadata-sdk", "SDK compartido para clientes internos")
+        System(bi, "hexadata-bi", "Dashboards y analitica")
+    }
+
+    System_Ext(cloud, "Cloud Provider", "Infraestructura y servicios administrados")
+    System_Ext(vcs, "GitHub", "Control de codigo, CI/CD y gobierno")
+
+    Rel(architect, core, "Define lineamientos y arquitectura")
+    Rel(operator, bi, "Consume insights y reportes")
+    Rel(securityLead, security, "Gestiona politicas y controles")
+
+    Rel(core, contracts, "Publica y consume contratos")
+    Rel(core, sdk, "Expone capacidades de integracion")
+    Rel(osint, core, "Entrega señales y eventos")
+    Rel(security, core, "Aplica politicas y auditoria")
+    Rel(bi, core, "Consulta datasets curados")
+
+    Rel(core, cloud, "Despliegue y operacion")
+    Rel(core, vcs, "Versionado y pipelines")

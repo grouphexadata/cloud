@@ -1,0 +1,23 @@
+# CODEOWNERS template for HEXADATA modules
+# Format: <pattern> <owner>
+
+* @hexadata-cloud/architecture
+
+# Core source
+/src/ @hexadata-cloud/core-team
+
+# Tests
+/tests/ @hexadata-cloud/qa-team
+
+# Security sensitive areas
+/security/ @hexadata-cloud/security-team
+/policies/ @hexadata-cloud/security-team
+
+# CI/CD and automation
+/.github/ @hexadata-cloud/devops-team
+/scripts/ @hexadata-cloud/devops-team
+
+# Documentation
+/docs/ @hexadata-cloud/architecture
+/README.md @hexadata-cloud/architecture
+/CHANGELOG.md @hexadata-cloud/architecture
