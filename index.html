@@ -383,10 +383,109 @@
       font-size: 0.88rem;
     }
 
+    .impact-section {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 64px 0;
+      background: linear-gradient(180deg, transparent, rgba(78,168,255,0.04) 50%, transparent);
+    }
+
+    .impact-quote {
+      border-left: 3px solid var(--brand);
+      padding: 14px 22px;
+      margin: 0 0 32px;
+      color: var(--brand-2);
+      font-size: 1.15rem;
+      font-style: italic;
+      background: rgba(78,168,255,0.06);
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    .impact-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .impact-story {
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .impact-story strong {
+      color: var(--text);
+    }
+
+    .impact-features {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .impact-feature {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .impact-feature-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .impact-feature-text strong {
+      display: block;
+      color: var(--brand-2);
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    .impact-feature-text span {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .impact-cta {
+      margin-top: 28px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .impact-author {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .impact-author strong {
+      color: var(--brand-2);
+    }
+
+    .impact-closing-quote {
+      margin-top: 28px;
+      color: var(--muted);
+      font-style: italic;
+      font-size: 0.92rem;
+    }
+
     @media (max-width: 1000px) {
       .hero,
       .grid-2,
       .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .impact-body {
         grid-template-columns: 1fr;
       }
 
@@ -410,10 +509,11 @@
       </div>
       <nav class="nav" aria-label="Principal">
         <a href="#vision">Vision</a>
+        <a href="#impact">Historia</a>
         <a href="#architecture">Arquitectura</a>
         <a href="#repos">Repos</a>
         <a href="#roadmap">Roadmap</a>
-        <a href="#contact">Contacto</a>
+        <a href="hexadata_prompt.html" style="color:var(--brand);font-weight:700;">Toolkit &rarr;</a>
       </nav>
     </div>
   </header>
@@ -470,6 +570,73 @@
           </p>
         </div>
       </aside>
+    </section>
+
+    <section class="impact-section" id="impact" aria-label="Historia e impacto">
+      <div class="container">
+        <blockquote class="impact-quote">
+          &ldquo;De la fisura en la certeza naci&oacute; la arquitectura de la posibilidad.&rdquo;
+        </blockquote>
+
+        <div class="impact-body">
+          <div>
+            <p class="impact-story">
+              Hace un tiempo viv&iacute; una decepc&oacute;n profesional que me hizo replantearme
+              c&oacute;mo interactuamos con la IA.
+              Me cans&eacute; de herramientas, soluciones y respuestas mediocres.
+              As&iacute; que en lugar de quejarme, decid&iacute; construir un ecosistema
+              para <strong>ordenar el caos</strong>.
+            </p>
+            <p class="impact-story">
+              El resultado es una <strong>arquitectura inteligente y evolutiva</strong>:
+              un meta-prompt con interfaz interactiva que aplica un protocolo de 6 pasos
+              con validaci&oacute;n temporal (Abril 2026), auto-cr&iacute;tica obligatoria
+              y roles de experto.
+            </p>
+
+            <p class="impact-closing-quote">
+              &ldquo;La validaci&oacute;n m&aacute;s profunda no es la que se recibe,
+              sino la que se construye y se entrega.&rdquo;
+            </p>
+
+            <div class="impact-author">
+              Construido por <strong>Francisco Caballero</strong> &mdash;
+              Arquitecto de sistemas predictivos &amp; ecosistemas de inteligencia distribuida
+            </div>
+          </div>
+
+          <div>
+            <div class="impact-features">
+              <div class="impact-feature">
+                <div class="impact-feature-icon">&#9989;</div>
+                <div class="impact-feature-text">
+                  <strong>Trazabilidad digital verificada</strong>
+                  <span>Cada respuesta incluye firma de validaci&oacute;n temporal y hash de contexto.</span>
+                </div>
+              </div>
+              <div class="impact-feature">
+                <div class="impact-feature-icon">&#9989;</div>
+                <div class="impact-feature-text">
+                  <strong>M&eacute;tricas de Precisi&oacute;n / Impacto en tiempo real</strong>
+                  <span>SLOs observables: fidelity index, error rate, latencia de respuesta.</span>
+                </div>
+              </div>
+              <div class="impact-feature">
+                <div class="impact-feature-icon">&#9989;</div>
+                <div class="impact-feature-text">
+                  <strong>Pensamiento estructurado para mentes creativas</strong>
+                  <span>6 pasos con auto-cr&iacute;tica obligatoria y roles de experto intercambiables.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="impact-cta">
+              <a class="btn primary" href="hexadata_prompt.html">&#128279; Pr&uacute;ebalo ahora</a>
+              <span style="color:var(--muted);font-size:0.88rem;">Gratuito &mdash; sin registro &mdash; corre en tu navegador</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="section" id="architecture">
