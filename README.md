@@ -90,7 +90,7 @@ default allow = false
 allow {
     input.temperature >= 0.1; input.temperature <= 0.5
     input.seed != null
-    input.model in ["gpt-4", "claude-3", "local-phi3"]
+    input.model in ["gpt-5.3-codex", "claude-3.7-sonnet", "gemini-2.5-pro", "llama-3.2-70b", "local-phi3"]
 }
 ```
 

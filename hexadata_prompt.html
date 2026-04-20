@@ -399,6 +399,66 @@
             align-items: center;
         }
 
+        .control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+        }
+
+        .control-card {
+            border: 1px solid var(--border);
+            background: rgba(3, 13, 26, 0.55);
+            border-radius: 6px;
+            padding: 0.85rem;
+            display: grid;
+            gap: 0.65rem;
+        }
+
+        .control-title {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--turquoise-2);
+        }
+
+        .control-help {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            line-height: 1.45;
+        }
+
+        .field-mini {
+            width: 100%;
+            background: var(--void);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.55rem 0.65rem;
+            font-family: var(--font-sans);
+            font-size: 0.84rem;
+            border-radius: 4px;
+        }
+
+        .field-mini:focus {
+            outline: none;
+            border-color: var(--turquoise);
+            box-shadow: 0 0 0 3px var(--turquoise-glow);
+        }
+
+        .control-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.78rem;
+            color: var(--text-dim);
+        }
+
+        .memory-status {
+            font-size: 0.74rem;
+            color: var(--text-dim);
+            min-height: 1rem;
+        }
+
         textarea, .code-block {
             width: 100%;
             min-height: 300px;
@@ -444,6 +504,13 @@
         }
 
         .btn:active { transform: translateY(0); }
+
+        .btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
 
         .btn-secondary {
             background: transparent;
@@ -551,8 +618,32 @@
             font-size: 0.85rem;
             line-height: 1.7;
             min-height: 300px;
-            max-height: 600px;
-            overflow-y: auto;
+            overflow: visible;
+        }
+
+        .generation-progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            overflow: hidden;
+            margin: 0.4rem 1rem 0.8rem;
+            position: relative;
+        }
+
+        .generation-progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--turquoise), var(--emerald));
+            transition: width 0.35s ease;
+        }
+
+        .generation-progress-text {
+            margin: 0 1rem 0.8rem;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-dim);
         }
 
         .output-content h4 {
@@ -573,6 +664,32 @@
         }
 
         .output-content li { margin-bottom: 0.35rem; }
+
+        .output-content pre {
+            background: rgba(3, 13, 26, 0.88);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.85rem;
+            overflow-x: auto;
+            margin: 0.75rem 0;
+            color: var(--silver);
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            line-height: 1.55;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+
+        .highlight-box {
+            border: 1px solid rgba(123, 211, 234, 0.26);
+            background: rgba(123, 211, 234, 0.08);
+            border-radius: 6px;
+            padding: 0.75rem;
+        }
 
         .tag {
             display: inline-block;
@@ -1048,9 +1165,10 @@
             .security-grid { grid-template-columns: 1fr; }
             .telemetry-strip { grid-template-columns: repeat(3, 1fr); }
             .processor-grid { grid-template-columns: 1fr; }
+            .control-grid { grid-template-columns: 1fr; }
+            .two-col { grid-template-columns: 1fr; }
             .data-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
             .brand h1 { font-size: 1.4rem; }
-            .output-content { max-height: 500px; }
         }
 
         @media (max-width: 480px) {
@@ -1091,10 +1209,10 @@
             padding: 4px 11px;
             border-radius: 4px;
             border: 1px solid rgba(255,255,255,0.28);
-            background: rgba(0, 180, 216, 0.08);
+            background: rgba(0, 45, 68, 0.55);
             -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
-            color: #c8dff0;
+            color: #ffffff;
             font-size: 0.72rem;
             font-weight: 600;
             text-decoration: none;
@@ -1117,7 +1235,7 @@
 </head>
 <body>
     <div class="scanline"></div>
-    <canvas id="neural-canvas" aria-hidden="true"></canvas>
+    <canvas id="neural-canvas"></canvas>
 
     <header>
         <div class="container header-grid">
@@ -1138,12 +1256,14 @@
                 <div style="margin-top:8px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
                     <a href="https://github.com/grouphexadata/cloud" target="_blank" rel="noopener noreferrer"
                        style="color:var(--turquoise-2);font-family:var(--font-mono);font-size:0.72rem;text-decoration:none;display:flex;align-items:center;gap:5px;border:1px solid rgba(0,180,216,0.25);padding:3px 8px;border-radius:4px;transition:all 0.2s;"
-                       onmouseover="this.style.background='rgba(0,180,216,0.10)'" onmouseout="this.style.background='transparent'">
+                              onmouseover="this.style.background='rgba(0,180,216,0.10)'" onmouseout="this.style.background='transparent'"
+                              onfocus="this.style.background='rgba(0,180,216,0.10)'" onblur="this.style.background='transparent'">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.66-.22.66-.48v-1.69c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.8c.85 0 1.71.11 2.51.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10.01 10.01 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
                         grouphexadata/cloud
                     </a>
                     <a href="index.html" style="color:var(--silver);font-family:var(--font-mono);font-size:0.72rem;text-decoration:none;border:1px solid rgba(192,197,206,0.2);padding:3px 8px;border-radius:4px;transition:all 0.2s;"
-                       onmouseover="this.style.background='rgba(192,197,206,0.08)'" onmouseout="this.style.background='transparent'">
+                              onmouseover="this.style.background='rgba(192,197,206,0.08)'" onmouseout="this.style.background='transparent'"
+                              onfocus="this.style.background='rgba(192,197,206,0.08)'" onblur="this.style.background='transparent'">
                         &#8592; HEXA-DATA CLOUD
                     </a>
                 </div>
@@ -1189,8 +1309,42 @@
                         <span style="color: var(--text-dim); font-size: 0.7rem;">Markdown soportado</span>
                     </div>
                     <textarea id="rawInput" placeholder="Ejemplo: Tengo una idea de app para sostenibilidad, presupuesto 5k, quiero llegar a startups tech, no sé por dónde empezar, necesito validar el mercado antes de gastar..."></textarea>
+                    <div class="control-grid">
+                        <div class="control-card">
+                            <div class="control-title">Motor Adaptativo</div>
+                            <select id="aiModel" class="field-mini" aria-label="Seleccionar IA objetivo">
+                                <option value="gpt-5.3-codex" selected>GPT-5.3-Codex</option>
+                                <option value="claude-3.7-sonnet">Claude 3.7 Sonnet</option>
+                                <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                                <option value="llama-3.2-70b">Llama 3.2 70B</option>
+                            </select>
+                            <select id="outputDepth" class="field-mini" aria-label="Nivel de profundidad del output">
+                                <option value="corto">Corto ejecutivo</option>
+                                <option value="balanceado" selected>Balanceado</option>
+                                <option value="extenso">Extenso (arquitectónico)</option>
+                            </select>
+                            <label class="control-check" for="includePremium">
+                                <input id="includePremium" type="checkbox" checked>
+                                <span>Activar features premium (evolución, autocura, validación estocástica).</span>
+                            </label>
+                            <label class="control-check" for="includeTools">
+                                <input id="includeTools" type="checkbox" checked>
+                                <span>Incluir herramientas sugeridas (MCP, observabilidad, seguridad).</span>
+                            </label>
+                        </div>
+                        <div class="control-card">
+                            <div class="control-title">Directrices Persistentes</div>
+                            <textarea id="persistentDirectives" class="field-mini" style="min-height: 110px; resize: vertical;" placeholder="Ejemplo: priorizar trazabilidad ISO 27001, evitar respuestas sin métricas, mantener estilo técnico ejecutable."></textarea>
+                            <div style="display:flex; gap:0.55rem; flex-wrap:wrap;">
+                                <button class="btn btn-secondary" onclick="savePersistentDirectives()" type="button">Guardar directrices</button>
+                                <button class="btn btn-secondary" onclick="clearPersistentDirectives()" type="button">Limpiar memoria</button>
+                            </div>
+                            <div id="memoryStatus" class="memory-status">Sin directrices persistentes guardadas.</div>
+                            <div class="control-help">Estas directrices se incorporan automáticamente en cada ejecución para mantener coherencia entre sesiones.</div>
+                        </div>
+                    </div>
                     <div style="display: flex; gap: 0.75rem;">
-                        <button class="btn" onclick="processIdeas()">
+                        <button class="btn" id="processIdeasBtn" onclick="processIdeas()">
                             <span>⚡</span> Estructurar con HEXA-DATA
                         </button>
                         <button class="btn btn-secondary" onclick="clearAll()">Limpiar</button>
@@ -1207,6 +1361,10 @@
                         </div>
                         <button class="copy-output-btn" id="copyOutputBtn" onclick="copyOutput(this)" title="Copiar output al portapapeles">📋 Copiar Prompt</button>
                     </div>
+                    <div class="generation-progress hidden" id="generationProgress" aria-hidden="true">
+                        <div class="generation-progress-fill" id="generationProgressFill"></div>
+                    </div>
+                    <div class="generation-progress-text hidden" id="generationProgressText">Estado: listo</div>
                     <div class="output-content" id="outputContent">
                         <div style="color: var(--text-dim); text-align: center; padding-top: 4rem; font-style: italic;">
                             [Sistema listo. Agrega ideas en el panel izquierdo y ejecuta el protocolo.]
@@ -1673,7 +1831,7 @@ CHANGELOG.md</pre>
                             <li>No intenta identificar personas concretas.</li>
                             <li>Clasifica solo origen agregado: Google, GitHub, comunidad, directo u otros.</li>
                             <li>Solicita consentimiento antes de activar medición persistente.</li>
-                            <li>Permite activar Google Analytics 4 si luego lo configuras.</li>
+                            <li>Permite integrar Google Analytics 4 para análisis avanzado de audiencia.</li>
                         </ul>
                     </div>
                 </div>
@@ -1710,7 +1868,7 @@ CHANGELOG.md</pre>
                 </div>
 
                 <div class="alert info" style="margin-top: 1rem;">
-                    <strong>IMPORTANTE:</strong> GitHub no expone la identidad de quienes visitan un repositorio. Si quieres métricas reales de visitantes, debes medir la landing o documentación publicada y trabajar con datos agregados. Este sitio ya queda preparado para eso.
+                    <strong>PRIVACIDAD:</strong> GitHub Pages no expone la identidad de los visitantes. Las métricas mostradas son locales al navegador y completamente anónimas. No se recopila ningún dato personal.
                 </div>
             </div>
         </section>
@@ -1736,16 +1894,16 @@ CHANGELOG.md</pre>
                         </div>
                         <div class="signal-item">
                             <strong>3. Calificación</strong>
-                            Tú recibes una ficha uniforme para distinguir curiosidad, piloto, implementación o alianza.
+                            Cada solicitud llega estructurada: caso de uso, prioridad y medio de contacto, lista para ser evaluada.
                         </div>
                         <div class="signal-item">
                             <strong>4. Respuesta</strong>
-                            Respondes con material, demo, propuesta técnica o agenda de llamada según criticidad.
+                            Según la naturaleza de la solicitud, se proporciona material, demo, propuesta técnica o agenda de llamada.
                         </div>
                     </div>
 
                     <div class="alert" style="margin-top: 1rem;">
-                        <strong>MODELO SEGURO:</strong> este formulario no expone una base de datos ni almacena PII en servidor. Genera una solicitud estructurada por correo o copia local para que tú la gestiones.
+                        <strong>MODELO SEGURO:</strong> este formulario no expone una base de datos ni almacena datos personales en servidor. Genera una solicitud estructurada que se envía directamente por correo electrónico.
                     </div>
                 </div>
 
@@ -1957,13 +2115,56 @@ CHANGELOG.md</pre>
             endpointMode: 'auto'
         };
 
+        const promptMemoryConfig = {
+            directivesStorageKey: 'hexa.prompt.directives'
+        };
+
+        let generationTimerId = null;
+
+        const aiProfiles = {
+            'gpt-5.3-codex': {
+                label: 'GPT-5.3-Codex',
+                style: 'Precisión técnica + ejecución por etapas',
+                strengths: ['descomposición de problemas', 'razonamiento estructurado', 'refactor seguro'],
+                tools: ['Model Context Protocol (MCP)', 'OpenAPI Gateway', 'GitHub Actions', 'OPA Policy Engine']
+            },
+            'claude-3.7-sonnet': {
+                label: 'Claude 3.7 Sonnet',
+                style: 'Síntesis profunda + argumentación extensa',
+                strengths: ['contexto largo', 'consistencia narrativa', 'evaluación comparativa'],
+                tools: ['LangGraph', 'LangSmith', 'Prompt Registry', 'Conformal Validation Layer']
+            },
+            'gemini-2.5-pro': {
+                label: 'Gemini 2.5 Pro',
+                style: 'Multimodal + planificación de alto contexto',
+                strengths: ['integración datos-documentos', 'resumen semántico', 'coordinación de agentes'],
+                tools: ['Vertex Tool Calling', 'BigQuery', 'Cloud Run Gateways', 'OpenTelemetry']
+            },
+            'llama-3.2-70b': {
+                label: 'Llama 3.2 70B',
+                style: 'Control local + privacidad por diseño',
+                strengths: ['inferencia on-prem', 'coste predecible', 'adaptación con RAG local'],
+                tools: ['vLLM', 'Ollama', 'Weaviate/Chroma', 'Prometheus + Grafana']
+            }
+        };
+
         function escapeHtml(value) {
             return String(value)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        function getToneColor(tone) {
+            if (tone === 'ok') {
+                return 'var(--emerald)';
+            }
+            if (tone === 'warn') {
+                return 'var(--amber)';
+            }
+            return 'var(--text-dim)';
         }
 
         function getTelemetryConsent() {
@@ -1995,8 +2196,8 @@ CHANGELOG.md</pre>
             stats.lastInterestSolution = payload.solution;
             writeTelemetryStats(stats);
 
-            if (getTelemetryConsent() === 'accepted' && analyticsConfig.googleAnalyticsId && window.gtag) {
-                window.gtag('event', 'generate_lead', {
+            if (getTelemetryConsent() === 'accepted' && analyticsConfig.googleAnalyticsId && globalThis.gtag) {
+                globalThis.gtag('event', 'generate_lead', {
                     lead_solution: payload.solution,
                     lead_priority: payload.priority
                 });
@@ -2004,8 +2205,8 @@ CHANGELOG.md</pre>
         }
 
         function resolveContactEmail() {
-            const user = String.fromCharCode(...contactConfig.contactUserCodes);
-            const domain = String.fromCharCode(...contactConfig.contactDomainCodes);
+            const user = String.fromCodePoint(...contactConfig.contactUserCodes);
+            const domain = String.fromCodePoint(...contactConfig.contactDomainCodes);
             return `${user}@${domain}`;
         }
 
@@ -2056,7 +2257,7 @@ CHANGELOG.md</pre>
         function setInterestStatus(message, tone) {
             const status = document.getElementById('interestStatus');
             status.textContent = message;
-            status.style.color = tone === 'ok' ? 'var(--emerald)' : tone === 'warn' ? 'var(--amber)' : 'var(--text-dim)';
+            status.style.color = getToneColor(tone);
         }
 
         async function submitInterestToEndpoint(payload, subject, message) {
@@ -2105,13 +2306,14 @@ CHANGELOG.md</pre>
                     return;
                 }
             } catch (error) {
+                console.warn('Gateway privado no disponible', error);
                 setInterestStatus('El gateway privado no respondió. Uso canal alternativo.', 'warn');
             }
 
             const contactEmail = resolveContactEmail();
             if (contactEmail && deliveryConfig.endpointMode !== 'endpoint-only') {
                 const mailtoUrl = `mailto:${encodeURIComponent(contactEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
-                window.location.href = mailtoUrl;
+                globalThis.location.href = mailtoUrl;
                 setInterestStatus('Solicitud preparada en tu cliente de correo.', 'ok');
                 return;
             }
@@ -2171,8 +2373,8 @@ CHANGELOG.md</pre>
             script.src = `https://www.googletagmanager.com/gtag/js?id=${analyticsConfig.googleAnalyticsId}`;
             document.head.appendChild(script);
 
-            window.dataLayer = window.dataLayer || [];
-            window.gtag = function() { dataLayer.push(arguments); };
+            globalThis.dataLayer = globalThis.dataLayer || [];
+            globalThis.gtag = function() { globalThis.dataLayer.push(arguments); };
             gtag('js', new Date());
             gtag('config', analyticsConfig.googleAnalyticsId, {
                 anonymize_ip: true,
@@ -2192,11 +2394,11 @@ CHANGELOG.md</pre>
                 writeTelemetryStats(stats);
                 if (analyticsConfig.googleAnalyticsId) {
                     loadGoogleAnalytics();
-                    if (window.gtag) {
-                        window.gtag('event', 'page_view', {
+                    if (globalThis.gtag) {
+                        globalThis.gtag('event', 'page_view', {
                             page_title: document.title,
                             traffic_source_group: source,
-                            page_location: window.location.href
+                            page_location: globalThis.location.href
                         });
                     }
                 }
@@ -2219,15 +2421,258 @@ CHANGELOG.md</pre>
 
         function initializeTelemetry() {
             const consent = getTelemetryConsent();
-            if (!consent) {
-                document.getElementById('consentBanner').classList.remove('hidden');
-            } else {
+            if (consent) {
                 trackVisit();
+            } else {
+                document.getElementById('consentBanner').classList.remove('hidden');
             }
         }
 
         function setOutputPlaceholder() {
             document.getElementById('outputContent').innerHTML = '<div style="color: var(--text-dim); text-align: center; padding-top: 4rem; font-style: italic;">[Sistema listo. Agrega ideas en el panel izquierdo y ejecuta el protocolo.]</div>';
+        }
+
+        function setGenerationProgress(percent, label) {
+            const safePercent = Math.max(0, Math.min(100, percent));
+            const bar = document.getElementById('generationProgress');
+            const fill = document.getElementById('generationProgressFill');
+            const text = document.getElementById('generationProgressText');
+            if (!bar || !fill || !text) return;
+
+            bar.classList.remove('hidden');
+            text.classList.remove('hidden');
+            fill.style.width = `${safePercent}%`;
+            text.textContent = `Estado: ${label} (${safePercent}%)`;
+        }
+
+        function endGenerationProgress() {
+            const bar = document.getElementById('generationProgress');
+            const fill = document.getElementById('generationProgressFill');
+            const text = document.getElementById('generationProgressText');
+            if (!bar || !fill || !text) return;
+
+            fill.style.width = '100%';
+            text.textContent = 'Estado: prompt generado (100%)';
+
+            setTimeout(() => {
+                bar.classList.add('hidden');
+                text.classList.add('hidden');
+                fill.style.width = '0%';
+            }, 1200);
+        }
+
+        function setProcessButtonState(isRunning) {
+            const btn = document.getElementById('processIdeasBtn');
+            if (!btn) return;
+
+            if (isRunning) {
+                btn.disabled = true;
+                btn.innerHTML = '<span>⏳</span> Generando Prompt...';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<span>⚡</span> Estructurar con HEXA-DATA';
+            }
+        }
+
+        function getAiProfile(modelKey) {
+            return aiProfiles[modelKey] || aiProfiles['gpt-5.3-codex'];
+        }
+
+        function getSelectedValue(id, fallback) {
+            const el = document.getElementById(id);
+            if (!el) return fallback;
+            return el.value || fallback;
+        }
+
+        function detectProjectType(input) {
+            if (/gitops|kubernetes|argo|devops|pipeline|infraestructura|deploy/i.test(input)) return 'Plataforma/GitOps';
+            if (/riesgo|actuarial|predic|modelo|calibr|métrica|estadíst/i.test(input)) return 'Analítica Predictiva';
+            if (/ui|ux|frontend|diseño|interfaz|web/i.test(input)) return 'Producto Digital';
+            if (/seguridad|cumplimiento|iso|soc2|jailbreak|privacidad/i.test(input)) return 'Seguridad & Compliance';
+            return 'Estrategia General';
+        }
+
+        function inferSkills(input, projectType, aiProfile) {
+            const skills = ['Arquitecto de Prompt', 'Validador de Calidad', 'Analista de Riesgo'];
+            if (projectType === 'Plataforma/GitOps') skills.push('Ingeniero DevOps', 'Especialista SRE');
+            if (projectType === 'Analítica Predictiva') skills.push('Científico de Datos', 'Especialista en Calibración');
+            if (projectType === 'Producto Digital') skills.push('Diseñador UX', 'Frontend Engineer');
+            if (projectType === 'Seguridad & Compliance') skills.push('Arquitecto de Seguridad', 'Oficial de Cumplimiento');
+            if (/rag|vector|retrieval/i.test(input)) skills.push('Ingeniero RAG');
+            if (/agente|langgraph|autogen/i.test(input)) skills.push('Orquestador de Agentes');
+            if (/monte|mcpv|conformal|bayes/i.test(input)) skills.push('Evaluador Estocástico');
+            return [...new Set([...skills, `Especialista ${aiProfile.label}`])];
+        }
+
+        function buildContextSignals(input) {
+            return {
+                hasBudget: /\$\d|presupuesto|costo|dinero|inversión/i.test(input),
+                hasAudience: /audiencia|público|cliente|usuario|startup|empresa/i.test(input),
+                hasGoal: /objetivo|meta|quiero|necesito|plan|estrategia/i.test(input),
+                hasTime: /fecha|plazo|tiempo|mes|semana|día|q[1-4]/i.test(input),
+                hasMetrics: /kpi|métrica|accuracy|brier|f1|latencia|roi|score/i.test(input),
+                hasSecurity: /seguridad|iso|soc2|privacy|gdpr|jailbreak|rbac/i.test(input),
+                hasTools: /herramienta|tool|mcp|api|langgraph|autogen|grafana|prometheus/i.test(input)
+            };
+        }
+
+        function detectGaps(signals) {
+            const gaps = [];
+            if (!signals.hasGoal) gaps.push('Objetivo central no está definido con criterio SMART.');
+            if (!signals.hasAudience) gaps.push('Segmento objetivo no está delimitado.');
+            if (!signals.hasBudget) gaps.push('No hay rango de presupuesto ni límite de coste por iteración.');
+            if (!signals.hasTime) gaps.push('Falta ventana temporal para ejecución y validación.');
+            if (!signals.hasMetrics) gaps.push('No se declararon métricas de éxito ni umbrales de aceptación.');
+            if (!signals.hasSecurity) gaps.push('No se explicitan controles de seguridad/compliance.');
+            if (!signals.hasTools) gaps.push('No hay stack de herramientas priorizado para ejecución.');
+            return gaps;
+        }
+
+        function buildRecommendations(gaps) {
+            const recs = [];
+            if (gaps.some(g => g.includes('SMART'))) recs.push('Define 1 objetivo SMART con dueño, fecha y valor objetivo.');
+            if (gaps.some(g => g.includes('Segmento'))) recs.push('Crea 2 perfiles de audiencia y sus fricciones prioritarias.');
+            if (gaps.some(g => g.includes('presupuesto'))) recs.push('Fija rango de coste mensual y coste máximo por experimento.');
+            if (gaps.some(g => g.includes('temporal'))) recs.push('Establece roadmap por sprints (2, 4 y 8 semanas).');
+            if (gaps.some(g => g.includes('métricas'))) recs.push('Define KPIs: precisión, calibración, latencia p95 y valor de negocio.');
+            if (gaps.some(g => g.includes('seguridad'))) recs.push('Añade política OPA/Kyverno y criterios de escalado a revisión humana.');
+            if (gaps.some(g => g.includes('herramientas'))) recs.push('Selecciona stack mínimo viable: orquestación, observabilidad y seguridad.');
+            if (recs.length === 0) recs.push('No se detectan brechas críticas; procede con piloto controlado y canary release.');
+            return recs;
+        }
+
+        function buildAdaptiveTemplate(aiProfile, depth, projectType) {
+            const depthMap = {
+                corto: ['Resumen Ejecutivo', '3 acciones inmediatas', 'Riesgo principal y mitigación'],
+                balanceado: ['Contexto automático', 'Skills por dominio', 'Estructura por fases', 'Métricas y rangos', 'Riesgos y fallback'],
+                extenso: ['Contexto amplio + memoria', 'Arquitectura por capas', 'Skills orquestados', 'Diagrama auto', 'Métricas avanzadas', 'Roadmap de implementación', 'Auditoría y trazabilidad']
+            };
+            const blocks = depthMap[depth] || depthMap.balanceado;
+            return blocks.map((block, idx) => `${idx + 1}. ${block} (${projectType} · ${aiProfile.style})`);
+        }
+
+        function buildAutoDiagram(projectType, skills) {
+            const skillHub = skills.slice(0, 4).join(' + ');
+            return [
+                'flowchart TD',
+                '    A[Entrada Compleja] --> B[Contexto Automatico]',
+                `    B --> C[Skills Inteligentes: ${skillHub}]`,
+                `    C --> D[Plantilla Adaptativa: ${projectType}]`,
+                '    D --> E[Validacion Estocastica + Brechas]',
+                '    E --> F[Salida Accionable + Trazabilidad]',
+                '    E --> G{Confianza >= Umbral?}',
+                '    G -- Si --> H[Promover Pipeline]',
+                '    G -- No --> I[Fallback + Recomendaciones]'
+            ].join('\n');
+        }
+
+        function buildDiagramSvg(projectType, skillsCount, gapCount) {
+            const safeType = escapeHtml(projectType);
+            return `
+                <svg viewBox="0 0 860 280" width="100%" role="img" aria-label="Diagrama inteligente automático">
+                    <defs>
+                        <linearGradient id="diagStroke" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#00B4D8"/>
+                            <stop offset="100%" stop-color="#7bd3ea"/>
+                        </linearGradient>
+                    </defs>
+                    <rect x="20" y="90" width="150" height="64" rx="10" fill="rgba(0,180,216,0.10)" stroke="url(#diagStroke)"/>
+                    <text x="95" y="128" fill="#e8f1fb" font-size="13" text-anchor="middle" font-family="Courier New, monospace">Entrada</text>
+
+                    <rect x="210" y="90" width="170" height="64" rx="10" fill="rgba(16,185,129,0.10)" stroke="#10b981"/>
+                    <text x="295" y="120" fill="#e8f1fb" font-size="12" text-anchor="middle" font-family="Courier New, monospace">Contexto Auto</text>
+                    <text x="295" y="136" fill="#94a9c0" font-size="10" text-anchor="middle" font-family="Courier New, monospace">${safeType}</text>
+
+                    <rect x="420" y="90" width="170" height="64" rx="10" fill="rgba(245,158,11,0.10)" stroke="#f59e0b"/>
+                    <text x="505" y="120" fill="#e8f1fb" font-size="12" text-anchor="middle" font-family="Courier New, monospace">Skills IA</text>
+                    <text x="505" y="136" fill="#94a9c0" font-size="10" text-anchor="middle" font-family="Courier New, monospace">${skillsCount} módulos</text>
+
+                    <rect x="630" y="90" width="200" height="64" rx="10" fill="rgba(244,63,94,0.10)" stroke="#f43f5e"/>
+                    <text x="730" y="120" fill="#e8f1fb" font-size="12" text-anchor="middle" font-family="Courier New, monospace">Validación + Salida</text>
+                    <text x="730" y="136" fill="#94a9c0" font-size="10" text-anchor="middle" font-family="Courier New, monospace">Brechas: ${gapCount}</text>
+
+                    <line x1="170" y1="122" x2="210" y2="122" stroke="#7bd3ea" stroke-width="2" marker-end="url(#arrow)"/>
+                    <line x1="380" y1="122" x2="420" y2="122" stroke="#7bd3ea" stroke-width="2" marker-end="url(#arrow)"/>
+                    <line x1="590" y1="122" x2="630" y2="122" stroke="#7bd3ea" stroke-width="2" marker-end="url(#arrow)"/>
+
+                    <defs>
+                        <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                            <polygon points="0 0, 8 4, 0 8" fill="#7bd3ea"/>
+                        </marker>
+                    </defs>
+                </svg>
+            `;
+        }
+
+        function buildStructuredExamples(projectType) {
+            const jsonExample = `{
+  "proyecto": "${projectType}",
+  "metricas": {
+    "precision": 0.89,
+    "intervalo_confianza": "[0.82, 0.93]",
+    "brier_score": 0.14,
+    "latencia_p95_ms": 780
+  },
+  "rangos": {
+    "temperatura": "[0.1, 0.5]",
+    "token_budget": "[4k, 128k]",
+    "drift_aceptable": "< 0.08"
+  },
+  "distancias": {
+    "L2": 0.18,
+    "KL_divergence": 0.06
+  }
+}`;
+
+            const yamlExample = `pipeline_gate:
+  confidence_threshold: 0.82
+  brier_max: 0.15
+  drift_max: 0.08
+  fallback:
+    - rule_based_agent
+    - previous_stable_prompt`;
+
+            return { jsonExample, yamlExample };
+        }
+
+        function getPersistentDirectives() {
+            return localStorage.getItem(promptMemoryConfig.directivesStorageKey) || '';
+        }
+
+        function setMemoryStatus(message, tone) {
+            const status = document.getElementById('memoryStatus');
+            if (!status) return;
+            status.textContent = message;
+            status.style.color = getToneColor(tone);
+        }
+
+        function savePersistentDirectives() {
+            const value = (document.getElementById('persistentDirectives').value || '').trim();
+            if (!value) {
+                setMemoryStatus('No se guardó nada: la directriz está vacía.', 'warn');
+                return;
+            }
+            localStorage.setItem(promptMemoryConfig.directivesStorageKey, value);
+            setMemoryStatus(`Directrices guardadas (${value.split(/\s+/).length} palabras).`, 'ok');
+        }
+
+        function clearPersistentDirectives() {
+            localStorage.removeItem(promptMemoryConfig.directivesStorageKey);
+            const textarea = document.getElementById('persistentDirectives');
+            if (textarea) textarea.value = '';
+            setMemoryStatus('Memoria persistente limpiada para este navegador.', 'neutral');
+        }
+
+        function loadPersistentDirectives() {
+            const saved = getPersistentDirectives();
+            const textarea = document.getElementById('persistentDirectives');
+            if (!textarea) return;
+            textarea.value = saved;
+            if (saved) {
+                setMemoryStatus(`Directrices cargadas automáticamente (${saved.split(/\s+/).length} palabras).`, 'ok');
+            } else {
+                setMemoryStatus('Sin directrices persistentes guardadas.', 'neutral');
+            }
         }
 
         // Tab Switching
@@ -2285,32 +2730,50 @@ CHANGELOG.md</pre>
         function processIdeas() {
             const input = document.getElementById('rawInput').value.trim();
             const output = document.getElementById('outputContent');
+            const settings = {
+                aiModel: getSelectedValue('aiModel', 'gpt-5.3-codex'),
+                depth: getSelectedValue('outputDepth', 'balanceado'),
+                includePremium: document.getElementById('includePremium').checked,
+                includeTools: document.getElementById('includeTools').checked,
+                directives: (document.getElementById('persistentDirectives').value || '').trim() || getPersistentDirectives()
+            };
             
             if (!input) {
                 alert('Por favor, ingresa ideas desordenadas en el panel izquierdo.');
                 return;
             }
 
+            if (generationTimerId) {
+                return;
+            }
+
+            setProcessButtonState(true);
+            setGenerationProgress(5, 'Iniciando protocolo HEXA-DATA');
+
             // Reset status
             output.innerHTML = '<div style="text-align: center; padding-top: 3rem;"><div class="typing" style="color: var(--turquoise); font-family: var(--font-mono);">Iniciando Protocolo HEXA-DATA...</div></div>';
             
             // Simulate processing steps
             setTimeout(() => {
+                setGenerationProgress(25, 'Analizando entrada y detectando brechas');
                 output.innerHTML = '<div style="text-align: center; padding-top: 3rem;"><div class="typing" style="color: var(--amber); font-family: var(--font-mono);">Fase 1/6: Análisis de entrada y detección de gaps...</div></div>';
             }, 800);
 
             setTimeout(() => {
+                setGenerationProgress(50, 'Validando contexto y restricciones');
                 output.innerHTML = '<div style="text-align: center; padding-top: 3rem;"><div class="typing" style="color: var(--amber); font-family: var(--font-mono);">Fase 2/6: Validación temporal y verificación de fuentes...</div></div>';
             }, 1800);
 
             setTimeout(() => {
+                setGenerationProgress(75, 'Construyendo plantilla dinámica y diagrama');
                 output.innerHTML = '<div style="text-align: center; padding-top: 3rem;"><div class="typing" style="color: var(--amber); font-family: var(--font-mono);">Fase 3/6: Generando estructuras adaptativas...</div></div>';
             }, 2800);
 
-            setTimeout(() => {
+            generationTimerId = setTimeout(() => {
                 // Generate structured output based on input analysis
-                const structured = generateStructuredOutput(input);
+                const structured = generateStructuredOutput(input, settings);
                 output.innerHTML = structured.html;
+                setGenerationProgress(95, 'Finalizando salida y métricas');
                 
                 // Update metrics
                 document.getElementById('statusPrecision').innerText = `PRECISIÓN: ${structured.metrics.precision}/100`;
@@ -2321,106 +2784,181 @@ CHANGELOG.md</pre>
                 document.getElementById('statusImpact').className = 'status-item valid';
 
                 // Add to history
-                addToHistory(input.substring(0, 50) + '...', structured.metrics);
+                addToHistory(input.substring(0, 120) + (input.length > 120 ? '...' : ''), structured.metrics);
+
+                generationTimerId = null;
+                endGenerationProgress();
+                setProcessButtonState(false);
             }, 4000);
         }
 
-        function generateStructuredOutput(input) {
-            // Simple heuristic analysis to simulate the Architect
-            const words = input.split(/\s+/).length;
-            const hasBudget = /\$\d|presupuesto|costo|dinero|inversión/i.test(input);
-            const hasAudience = /audiencia|público|cliente|usuario|startup|empresa/i.test(input);
-            const hasGoal = /objetivo|meta|quiero|necesito|plan|estrategia/i.test(input);
-            const hasTime = /fecha|plazo|tiempo|mes|semana|día/i.test(input);
-            
-            let complexity = Math.min(10, Math.ceil(words / 15) + (hasBudget ? 2 : 0) + (hasAudience ? 2 : 0));
-            let precision = Math.min(98, 70 + (hasGoal ? 15 : 0) + (hasAudience ? 10 : 0) + (hasBudget ? 3 : 0));
-            let completeness = Math.min(97, 65 + (hasBudget ? 10 : 0) + (hasTime ? 10 : 0) + (hasAudience ? 12 : 0));
-            let impact = Math.min(96, 60 + (hasGoal ? 20 : 0) + (hasBudget ? 10 : 0) + (hasTime ? 6 : 0));
+        function detectDomain(input) {
+            if (/código|programar|app|software|api|backend|frontend/i.test(input)) return 'Tecnología/Desarrollo';
+            if (/marketing|contenido|linkedin|redes|publicidad|marca/i.test(input)) return 'Marketing/Digital';
+            if (/negocio|empresa|startup|inversión|ventas|cliente/i.test(input)) return 'Negocios/Estrategia';
+            if (/diseño|ui|ux|interfaz|visual|marca/i.test(input)) return 'Diseño/Creativo';
+            return 'General';
+        }
 
-            // Detect domain
-            let domain = 'General';
-            if (/código|programar|app|software|api|backend|frontend/i.test(input)) domain = 'Tecnología/Desarrollo';
-            else if (/marketing|contenido|linkedin|redes|publicidad|marca/i.test(input)) domain = 'Marketing/Digital';
-            else if (/negocio|empresa|startup|inversión|ventas|cliente/i.test(input)) domain = 'Negocios/Estrategia';
-            else if (/diseño|ui|ux|interfaz|visual|marca/i.test(input)) domain = 'Diseño/Creativo';
+        function getDepthLabel(depth) {
+            if (depth === 'extenso') return 'Extenso';
+            if (depth === 'corto') return 'Corto';
+            return 'Balanceado';
+        }
 
-            const roles = [];
-            if (domain === 'Tecnología/Desarrollo') roles.push('Arquitecto de Software', 'Ingeniero de Prompts', 'Analista de Seguridad');
-            else if (domain === 'Marketing/Digital') roles.push('Estratega de Contenido', 'Analista de Growth', 'Especialista en Marca');
-            else if (domain === 'Negocios/Estrategia') roles.push('Consultor Estratégico', 'Analista Financiero', 'Especialista en Operaciones');
-            else roles.push('Analista Generalista', 'Estratega', 'Validador de Contenido');
+        function getDepthBonus(depth) {
+            if (depth === 'extenso') return 8;
+            if (depth === 'balanceado') return 4;
+            return 0;
+        }
 
-            const gaps = [];
-            if (!hasBudget) gaps.push('Presupuesto no especificado → Se asume escenario lean');
-            if (!hasTime) gaps.push('Timeline no definida → Se propone roadmap de 90 días');
-            if (!hasAudience) gaps.push('Audiencia objetivo ambigua → Se requiere segmentación');
+        function getOptimalOptionLabel(depth) {
+            if (depth === 'extenso') return 'Arquitectónica evolutiva';
+            if (depth === 'corto') return 'Ejecutiva compacta';
+            return 'Balanceada accionable';
+        }
 
-            const actions = [
-                'Definir objetivo SMART basado en el input analizado',
-                hasBudget ? 'Asignar presupuesto a canales prioritarios' : 'Establecer presupuesto mínimo viable',
-                hasAudience ? 'Crear buyer persona detallado' : 'Investigar y definir audiencia objetivo',
-                'Establecer KPIs de seguimiento semanal',
-                'Programar revisión de validación en Q2 2026'
+        function getInputSnippet(input, depth) {
+            const limit = depth === 'extenso' ? 700 : 360;
+            const compact = input.replaceAll(/\s+/g, ' ').trim();
+            return escapeHtml(compact.slice(0, limit));
+        }
+
+        function calculateOutputMetrics(words, signals, settings, gapCount) {
+            const complexity = Math.min(10, Math.ceil(words / 20) + (signals.hasGoal ? 1 : 0) + (signals.hasMetrics ? 2 : 0) + (signals.hasSecurity ? 2 : 0));
+            const precision = Math.min(99, 66 + (signals.hasGoal ? 11 : 0) + (signals.hasAudience ? 8 : 0) + (signals.hasMetrics ? 9 : 0) + (settings.includeTools ? 4 : 0));
+            const completeness = Math.min(99, 62 + (signals.hasBudget ? 8 : 0) + (signals.hasTime ? 8 : 0) + (signals.hasSecurity ? 8 : 0) + (gapCount < 3 ? 8 : 0));
+            const impact = Math.min(98, 60 + (signals.hasGoal ? 12 : 0) + (settings.includePremium ? 10 : 0) + getDepthBonus(settings.depth));
+            return { complexity, precision, completeness, impact };
+        }
+
+        function getPremiumFeatures(includePremium) {
+            if (!includePremium) {
+                return [];
+            }
+            return [
+                'EvoPrompt++ con early-stopping evolutivo y surrogate models.',
+                'MCPV (Monte-Carlo Prompt Verification) para confianza calibrada.',
+                'Self-Healing Orchestrator con rollback por fidelidad/latencia.',
+                'RAG semántico con compresión contextual y control de deriva.'
             ];
+        }
 
-            const risks = [
-                'Información de mercado puede requerir actualización post-abril 2026',
-                'Dependencia de validación externa para datos financieros',
-                'Escalabilidad sujeta a recursos confirmados'
-            ];
+        function getToolStack(includeTools, aiProfile) {
+            if (!includeTools) {
+                return [];
+            }
+            return [...aiProfile.tools, 'Prompt Firewall', 'OpenTelemetry', 'Conformal Predictor'];
+        }
 
-            const html = `
+        function buildOptionalSection(title, items) {
+            if (!items.length) {
+                return '';
+            }
+            return `
+                <h4>${title}</h4>
+                <ul>
+                    ${items.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            `;
+        }
+
+        function buildStructuredHtml(data) {
+            const goalText = data.signals.hasGoal ? 'Declarado en la entrada' : 'No declarado, se requiere clarificación obligatoria';
+            const audienceText = data.signals.hasAudience ? 'Detectada en contexto' : 'No detectada, usar hipótesis de segmento provisional';
+            const restrictionText = data.signals.hasBudget ? 'Presupuesto presente' : 'Sin presupuesto declarado';
+            const timelineText = data.signals.hasTime ? 'Timeline presente' : 'Sin horizonte temporal explícito';
+            const gapFallback = data.gaps.length ? '' : '<li>Sin brechas críticas detectadas.</li>';
+
+            return `
                 <div class="resumen-ejecutivo">
-                    <div class="re-title">📊 Resumen Ejecutivo</div>
+                    <div class="re-title">📊 Resumen Ejecutivo Adaptativo</div>
                     <div class="re-body">
-                        Input de <strong>${words} palabras</strong> clasificado como dominio
-                        <span class="tag">${domain}</span> con complejidad
-                        <strong style="color:var(--turquoise)">${complexity}/10</strong>.
-                        Se detectaron <strong style="color:var(--warn)">${gaps.length} gaps críticos</strong> que requieren atención.
+                        Input de <strong>${data.words} palabras</strong> en dominio
+                        <span class="tag">${data.domain}</span> y proyecto
+                        <span class="tag">${data.projectType}</span> procesado con
+                        <span class="tag verified">${data.aiProfile.label}</span> en modo
+                        <strong style="color:var(--turquoise)">${data.depthLabel}</strong>.
+                        Complejidad estimada <strong style="color:var(--turquoise)">${data.complexity}/10</strong>
+                        con <strong style="color:var(--amber)">${data.gaps.length} brechas</strong> detectadas automáticamente.
                     </div>
                     <div class="re-meta">
-                        <span class="tag verified">Roles: ${roles.length}</span>
-                        <span class="tag">Pasos: 5</span>
-                        <span class="tag">Riesgos: ${risks.length}</span>
+                        <span class="tag verified">Skills: ${data.skills.length}</span>
+                        <span class="tag">Plantilla: ${data.templateBlocks.length} bloques</span>
+                        <span class="tag">Riesgos: ${data.risks.length}</span>
+                        <span class="tag">IA: ${data.aiProfile.style}</span>
                         <span class="tag verified">Abril 2026</span>
                     </div>
                 </div>
 
-                <h4>🎯 Análisis Inicial</h4>
+                <h4>🧭 Contexto Amplio + Contexto Automático</h4>
                 <ul>
-                    <li><strong>Objetivo inferido:</strong> ${hasGoal ? 'Explícito en entrada' : 'Requiere clarificación (Paso Cero activado)'}</li>
-                    <li><strong>Audiencia detectada:</strong> ${hasAudience ? 'Mencionada explícitamente' : 'No especificada → Gap identificado'}</li>
-                    <li><strong>Restricciones:</strong> ${hasBudget ? 'Presupuesto definido' : 'Sin restricción financiera declarada'} | ${hasTime ? 'Timeline presente' : 'Sin fecha límite'}</li>
+                    <li><strong>Objetivo:</strong> ${goalText}</li>
+                    <li><strong>Audiencia:</strong> ${audienceText}</li>
+                    <li><strong>Restricciones:</strong> ${restrictionText} | ${timelineText}</li>
+                    <li><strong>Extracto semántico:</strong> ${data.inputSnippet}</li>
                 </ul>
 
-                <h4>👥 Roles de Expertos Asignados</h4>
+                <h4>🧠 Skills Inteligentes Automáticos</h4>
                 <div style="margin-bottom: 1rem;">
-                    ${roles.map(r => `<span class="tag verified">${r}</span>`).join('')}
+                    ${data.skills.map(skill => `<span class="tag verified">${skill}</span>`).join('')}
                 </div>
 
-                <h4>⚠️ Gaps Detectados</h4>
+                <h4>🧩 Plantilla Dinámica por IA Seleccionada</h4>
                 <ul>
-                    ${gaps.map(g => `<li>${g}</li>`).join('')}
-                    ${gaps.length === 0 ? '<li>Sin gaps críticos detectados</li>' : ''}
+                    ${data.templateBlocks.map(t => `<li>${t}</li>`).join('')}
                 </ul>
 
-                <h4>📋 Estructura Recomendada</h4>
-                <p style="margin-bottom: 0.5rem;"><strong>Opción Óptima:</strong> Avanzada (equilibrio entre profundidad y velocidad de ejecución)</p>
+                <h4>🗺️ Diagrama Inteligente Automático (Mermaid)</h4>
+                <pre>${data.diagramCode}</pre>
+                <div class="highlight-box" style="margin-top:0.5rem;">
+                    ${data.diagramSvg}
+                </div>
+
+                <h4>⚠️ Brechas Detectadas + Recomendaciones</h4>
                 <ul>
-                    <li>Formato: Documento ejecutivo con anexos técnicos</li>
-                    <li>Priorización: Por impacto/coste usando matriz Eisenhower</li>
-                    <li>Variables: {presupuesto}, {timeline}, {audiencia}, {canal_principal}</li>
+                    ${data.gaps.map(g => `<li>${g}</li>`).join('')}
+                    ${gapFallback}
+                </ul>
+
+                <div class="highlight-box">
+                    <strong style="color:var(--turquoise)">Recomendaciones automáticas:</strong>
+                    <ul style="margin-top:0.45rem;">
+                        ${data.recommendations.map(r => `<li>${r}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <h4>📦 Ejemplos de Formato, Datos, Rangos y Métricas</h4>
+                <div class="two-col">
+                    <div>
+                        <div style="font-size:0.76rem; color:var(--text-dim); margin-bottom:0.3rem;">Ejemplo JSON</div>
+                        <pre>${data.examples.jsonExample}</pre>
+                    </div>
+                    <div>
+                        <div style="font-size:0.76rem; color:var(--text-dim); margin-bottom:0.3rem;">Ejemplo YAML</div>
+                        <pre>${data.examples.yamlExample}</pre>
+                    </div>
+                </div>
+
+                <h4>🧱 Estructura Recomendada</h4>
+                <p style="margin-bottom: 0.5rem;"><strong>Opción óptima:</strong> ${data.optimalOptionLabel}</p>
+                <ul>
+                    <li>Formato: Documento técnico con trazabilidad y control de incertidumbre</li>
+                    <li>Priorización: Impacto/Coste + riesgo de implementación</li>
+                    <li>Variables núcleo: {presupuesto}, {timeline}, {audiencia}, {métricas_objetivo}, {umbral_confianza}</li>
                 </ul>
 
                 <h4>🚀 Pasos Accionables Priorizados</h4>
                 <ol style="margin-left: 1.2rem; color: var(--text-dim);">
-                    ${actions.map((a, i) => `<li style="margin-bottom: 0.4rem;"><strong>${i+1}.</strong> ${a}</li>`).join('')}
+                    ${data.actions.map((a, i) => `<li style="margin-bottom: 0.4rem;"><strong>${i + 1}.</strong> ${a}</li>`).join('')}
                 </ol>
+
+                ${buildOptionalSection('🛠️ Herramientas Recomendadas', data.toolStack)}
+                ${buildOptionalSection('💎 Features Premium', data.premiumFeatures)}
 
                 <h4>🛡️ Riesgos Mitigados</h4>
                 <ul>
-                    ${risks.map(r => `<li>${r} <span class="tag">[PENDIENTE_VERIFICAR_2026]</span></li>`).join('')}
+                    ${data.risks.map(r => `<li>${r} <span class="tag">[PENDIENTE_VERIFICAR_2026]</span></li>`).join('')}
                 </ul>
 
                 <h4>📈 Métricas de Éxito Propuestas</h4>
@@ -2432,18 +2970,84 @@ CHANGELOG.md</pre>
 
                 <h4>🔁 Feedback Loop</h4>
                 <p style="color: var(--text-dim); font-style: italic;">
-                    "Para refinar esta estructura, proporciona: ¿tienes restricciones técnicas específicas? 
-                    ¿Existe un stack tecnológico preferido? El siguiente paso es validar contra fuentes de mercado Q2 2026."
+                    "Para refinar aún más: confirma umbrales de confianza, política de fallback y stack obligatorio por entorno."
                 </p>
+
+                <h4>🧾 Directrices y Memoria Persistente</h4>
+                <div class="highlight-box">
+                    <div style="font-size:0.76rem; color:var(--text-dim); margin-bottom:0.35rem;">Directriz activa para esta corrida</div>
+                    <div style="color:var(--silver);">${data.directives}</div>
+                </div>
 
                 <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--text-dim); font-family: var(--font-mono);">
                     <div>🔗 TRAZABILIDAD: AE-PROC-${Date.now().toString().slice(-6)}</div>
-                    <div>📅 FECHA: Abril 2026 | 🛡️ ROBUSTEZ: 3 capas aplicadas</div>
+                    <div>📅 FECHA: Abril 2026 | 🛡️ ROBUSTEZ: 3 capas aplicadas | ⚙️ IA: ${data.aiProfile.label}</div>
                     <div style="margin-top: 0.5rem; color: var(--emerald);">✓ RESPUESTA COMPLETA</div>
                 </div>
             `;
+        }
 
-            return { html, metrics: { precision, completeness, impact } };
+        function generateStructuredOutput(input, settings) {
+            const words = input.split(/\s+/).length;
+            const signals = buildContextSignals(input);
+            const aiProfile = getAiProfile(settings.aiModel);
+            const projectType = detectProjectType(input);
+            const skills = inferSkills(input, projectType, aiProfile);
+            const gaps = detectGaps(signals);
+            const recommendations = buildRecommendations(gaps);
+            const templateBlocks = buildAdaptiveTemplate(aiProfile, settings.depth, projectType);
+            const diagramCode = buildAutoDiagram(projectType, skills);
+            const diagramSvg = buildDiagramSvg(projectType, skills.length, gaps.length);
+            const examples = buildStructuredExamples(projectType);
+            const directives = settings.directives ? escapeHtml(settings.directives) : 'Sin directrices persistentes activas.';
+            const depthLabel = getDepthLabel(settings.depth);
+            const optimalOptionLabel = getOptimalOptionLabel(settings.depth);
+            const inputSnippet = getInputSnippet(input, settings.depth);
+            const domain = detectDomain(input);
+
+            const metrics = calculateOutputMetrics(words, signals, settings, gaps.length);
+
+            const actions = recommendations.slice(0, 5);
+            const risks = [
+                'Desalineación entre objetivo y métricas operativas.',
+                'Sobre-ajuste del prompt sin validación OOD.',
+                'Dependencia de herramientas externas sin fallback local.'
+            ];
+            const premiumFeatures = getPremiumFeatures(settings.includePremium);
+            const toolStack = getToolStack(settings.includeTools, aiProfile);
+
+            const html = buildStructuredHtml({
+                words,
+                domain,
+                projectType,
+                aiProfile,
+                depthLabel,
+                optimalOptionLabel,
+                complexity: metrics.complexity,
+                signals,
+                inputSnippet,
+                skills,
+                templateBlocks,
+                diagramCode,
+                diagramSvg,
+                gaps,
+                recommendations,
+                examples,
+                actions,
+                toolStack,
+                premiumFeatures,
+                risks,
+                directives
+            });
+
+            return {
+                html,
+                metrics: {
+                    precision: metrics.precision,
+                    completeness: metrics.completeness,
+                    impact: metrics.impact
+                }
+            };
         }
 
         function copyOutput(btn) {
@@ -2467,7 +3071,7 @@ CHANGELOG.md</pre>
                 document.body.appendChild(ta);
                 ta.select();
                 document.execCommand('copy');
-                document.body.removeChild(ta);
+                ta.remove();
                 btn.textContent = '✓ Copiado';
                 btn.classList.add('copied');
                 setTimeout(() => {
@@ -2516,7 +3120,15 @@ CHANGELOG.md</pre>
             this.style.height = Math.max(300, this.scrollHeight) + 'px';
         });
 
+        document.getElementById('persistentDirectives').addEventListener('blur', function() {
+            const value = this.value.trim();
+            if (!value) return;
+            localStorage.setItem(promptMemoryConfig.directivesStorageKey, value);
+            setMemoryStatus('Directrices auto-guardadas al salir del campo.', 'ok');
+        });
+
         setOutputPlaceholder();
+        loadPersistentDirectives();
         initializeTelemetry();
 
         // ─── Neural Network Background Animation ──────────────────────────
@@ -2527,8 +3139,8 @@ CHANGELOG.md</pre>
             let W, H, nodes, raf;
 
             function resize() {
-                W = canvas.width = window.innerWidth;
-                H = canvas.height = window.innerHeight;
+                W = canvas.width = globalThis.innerWidth;
+                H = canvas.height = globalThis.innerHeight;
             }
 
             function makeNode() {
@@ -2563,7 +3175,7 @@ CHANGELOG.md</pre>
                     for (let j = i + 1; j < nodes.length; j++) {
                         const dx = nodes[i].x - nodes[j].x;
                         const dy = nodes[i].y - nodes[j].y;
-                        const d = Math.sqrt(dx * dx + dy * dy);
+                        const d = Math.hypot(dx, dy);
                         if (d < DIST) {
                             const alpha = (1 - d / DIST) * 0.35;
                             ctx.beginPath();
@@ -2608,14 +3220,14 @@ CHANGELOG.md</pre>
             }
 
             // Respect reduced-motion preference
-            const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+            const mq = globalThis.matchMedia('(prefers-reduced-motion: reduce)');
             if (!mq.matches) {
                 resize();
                 init();
                 draw();
             }
 
-            window.addEventListener('resize', () => {
+            globalThis.addEventListener('resize', () => {
                 cancelAnimationFrame(raf);
                 resize();
                 init();
@@ -2625,14 +3237,14 @@ CHANGELOG.md</pre>
     </script>
     <script>
         function copyPromptPageLink(btn) {
-            navigator.clipboard.writeText(window.location.href).then(() => {
+            navigator.clipboard.writeText(globalThis.location.href).then(() => {
                 btn.textContent = '\u2713 Copiado';
                 btn.classList.add('copied');
                 setTimeout(() => {
                     btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg> Copiar enlace';
                     btn.classList.remove('copied');
                 }, 2000);
-            }).catch(() => { prompt('Copia este enlace:', window.location.href); });
+            }).catch(() => { prompt('Copia este enlace:', globalThis.location.href); });
         }
     </script>
 </body>
