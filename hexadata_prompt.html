@@ -7,40 +7,76 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta name="color-scheme" content="dark">
-    <title>ARCHITECTO EVOLUTIVO v3.0 | Sistema de Prompts Multipropósito</title>
+    <title>HEXA-DATA PROMPT | Sistema Inteligente de Prompts 2026</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2300B4D8'/%3E%3Cstop offset='1' stop-color='%230077b6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points='16,2 28,9 28,23 16,30 4,23 4,9' fill='url(%23g)'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='monospace' font-weight='900' font-size='13' fill='%23ffffff'%3EHX%3C/text%3E%3C/svg%3E">
     <style>
         :root {
-            --void: #050505;
-            --surface: #0f0f11;
-            --panel: #16161a;
-            --border: #2a2a2e;
-            --text: #e2e2e2;
-            --text-dim: #888899;
+            /* Paleta HEXA-DATA: Azul oscuro, Plata, Blanco, Gris claro, Turquesa */
+            --void: #030d1a;
+            --surface: #071428;
+            --panel: rgba(7, 20, 40, 0.78);
+            --panel-solid: #0a1a35;
+            --border: rgba(0, 180, 216, 0.18);
+            --border-bright: rgba(255, 255, 255, 0.12);
+            --text: #e8f1fb;
+            --text-dim: #94a9c0;
+            --silver: #C0C5CE;
+            --turquoise: #00B4D8;
+            --turquoise-glow: rgba(0, 180, 216, 0.18);
+            --turquoise-2: #7bd3ea;
+            --white: #FFFFFF;
+            --gray-light: #F0F4F8;
+            /* mantener para estados */
             --amber: #f59e0b;
-            --amber-glow: rgba(245, 158, 11, 0.15);
+            --amber-glow: rgba(245, 158, 11, 0.12);
             --emerald: #10b981;
             --emerald-glow: rgba(16, 185, 129, 0.15);
             --rose: #f43f5e;
-            --cyan: #06b6d4;
+            --cyan: var(--turquoise);
             --font-mono: 'Courier New', 'SF Mono', Consolas, monospace;
             --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+            /* Glass */
+            --glass-bg: rgba(7, 25, 55, 0.62);
+            --glass-blur: blur(14px);
+            --glass-border: 1px solid rgba(255,255,255,0.10);
+            --glow-white: 0 0 10px rgba(255,255,255,0.12);
+            --glow-turquoise: 0 0 18px rgba(0,180,216,0.28);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background-color: var(--void);
+            background-image:
+                radial-gradient(ellipse 120% 60% at 70% 0%, rgba(0,70,120,0.45) 0%, transparent 65%),
+                radial-gradient(ellipse 80% 40% at 10% 90%, rgba(0,80,140,0.30) 0%, transparent 60%);
             color: var(--text);
             font-family: var(--font-sans);
             line-height: 1.6;
             overflow-x: hidden;
         }
 
+        /* Neural network canvas background */
+        #neural-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.55;
+        }
+
+        /* Ensure content is above canvas */
+        header, nav, main, footer, .consent-banner, .scanline {
+            position: relative;
+            z-index: 1;
+        }
+
         /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--void); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--amber); }
+        ::-webkit-scrollbar-thumb { background: rgba(0,180,216,0.35); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--turquoise); }
 
         /* Animations */
         @keyframes scanline {
@@ -69,12 +105,13 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* Scanline */
         .scanline {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--amber), transparent);
-            opacity: 0.3;
-            animation: scanline 8s linear infinite;
+            background: linear-gradient(90deg, transparent, var(--turquoise), transparent);
+            opacity: 0.25;
+            animation: scanline 10s linear infinite;
             pointer-events: none;
             z-index: 9999;
         }
@@ -84,10 +121,22 @@
         
         /* Header */
         header {
-            border-bottom: 1px solid var(--border);
-            background: linear-gradient(180deg, var(--surface) 0%, var(--void) 100%);
+            border-bottom: 1px solid var(--border-bright);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 1px 30px rgba(0,180,216,0.12);
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--turquoise), transparent);
+            opacity: 0.6;
         }
         
         .header-grid {
@@ -106,10 +155,13 @@
             font-family: var(--font-mono);
             font-size: 2rem;
             letter-spacing: -0.02em;
-            background: linear-gradient(135deg, var(--text) 0%, var(--amber) 100%);
+            background: linear-gradient(135deg, var(--white) 0%, var(--turquoise) 60%, var(--turquoise-2) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 0.5rem;
+            text-shadow: none;
+            filter: drop-shadow(0 0 12px rgba(0,180,216,0.5));
         }
 
         .brand .subtitle {
@@ -127,8 +179,8 @@
         }
 
         .stamp-badge {
-            border: 2px solid var(--emerald);
-            color: var(--emerald);
+            border: 2px solid var(--turquoise);
+            color: var(--turquoise);
             padding: 0.5rem 1rem;
             font-family: var(--font-mono);
             font-size: 0.75rem;
@@ -136,9 +188,11 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             position: relative;
-            background: var(--emerald-glow);
+            background: var(--turquoise-glow);
             animation: stamp 0.6s ease-out forwards;
             transform-origin: center;
+            box-shadow: 0 0 14px rgba(0,180,216,0.25);
+            border-radius: 2px;
         }
 
         .stamp-badge::before {
@@ -154,11 +208,14 @@
 
         /* Navigation */
         nav {
-            background: var(--panel);
-            border-bottom: 1px solid var(--border);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-bright);
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.35);
         }
 
         .nav-tabs {
@@ -183,11 +240,12 @@
             letter-spacing: 0.05em;
         }
 
-        .nav-tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+        .nav-tab:hover { color: var(--text); background: rgba(0,180,216,0.06); }
         .nav-tab.active {
-            color: var(--amber);
-            border-bottom-color: var(--amber);
-            background: var(--amber-glow);
+            color: var(--turquoise);
+            border-bottom-color: var(--turquoise);
+            background: var(--turquoise-glow);
+            text-shadow: 0 0 12px rgba(0,180,216,0.6);
         }
 
         /* Main Content */
@@ -205,6 +263,8 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            color: var(--white);
+            text-shadow: 0 0 20px rgba(0,180,216,0.3);
         }
 
         .section-title::before {
@@ -212,25 +272,36 @@
             display: block;
             width: 4px;
             height: 1.5rem;
-            background: var(--amber);
+            background: linear-gradient(180deg, var(--turquoise), var(--turquoise-2));
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(0,180,216,0.5);
         }
 
-        /* Cards */
+        /* Cards - Glassmorphism */
         .card {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 2px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-bright);
+            border-radius: 8px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.30), var(--glow-white);
+            transition: box-shadow 0.3s, border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(0,180,216,0.30);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.40), var(--glow-turquoise);
         }
 
         .card::before {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, var(--amber), var(--emerald), var(--cyan), var(--amber));
+            background: linear-gradient(90deg, transparent, var(--turquoise), var(--turquoise-2), transparent);
             background-size: 300% 300%;
             animation: border-flow 4s ease infinite;
             opacity: 0;
@@ -258,7 +329,7 @@
             font-family: var(--font-mono);
             font-size: 0.75rem;
             text-transform: uppercase;
-            color: var(--amber);
+            color: var(--turquoise);
             letter-spacing: 0.1em;
             display: flex;
             justify-content: space-between;
@@ -268,7 +339,7 @@
         textarea, .code-block {
             width: 100%;
             min-height: 300px;
-            background: var(--void);
+            background: rgba(3, 13, 26, 0.75);
             border: 1px solid var(--border);
             color: var(--text);
             font-family: var(--font-mono);
@@ -276,18 +347,19 @@
             padding: 1rem;
             resize: vertical;
             line-height: 1.6;
+            border-radius: 4px;
         }
 
         textarea:focus {
             outline: none;
-            border-color: var(--amber);
-            box-shadow: 0 0 0 3px var(--amber-glow);
+            border-color: var(--turquoise);
+            box-shadow: 0 0 0 3px var(--turquoise-glow);
         }
 
         .btn {
             padding: 0.75rem 1.5rem;
-            background: var(--amber);
-            color: var(--void);
+            background: linear-gradient(135deg, var(--turquoise), #0077b6);
+            color: #fff;
             border: none;
             font-family: var(--font-sans);
             font-weight: 700;
@@ -298,6 +370,15 @@
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
+            gap: 0.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 12px rgba(0,180,216,0.30);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(0,180,216,0.45);
+        }
             gap: 0.5rem;
         }
 
@@ -315,20 +396,21 @@
         }
         .btn-secondary:hover { border-color: var(--text); color: var(--text); box-shadow: none; }
 
-        /* Output Zone */
         .output-zone {
-            background: var(--void);
+            background: rgba(3, 13, 26, 0.70);
             border: 1px solid var(--border);
+            border-radius: 6px;
             position: relative;
         }
 
         .output-header {
-            background: var(--panel);
+            background: rgba(7, 20, 40, 0.90);
             padding: 0.75rem 1rem;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-radius: 6px 6px 0 0;
         }
 
         .output-status {
@@ -358,12 +440,13 @@
         }
 
         .output-content h4 {
-            color: var(--amber);
+            color: var(--turquoise);
             font-family: var(--font-mono);
             margin: 1.5rem 0 0.5rem;
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            text-shadow: 0 0 10px rgba(0,180,216,0.4);
         }
 
         .output-content h4:first-child { margin-top: 0; }
@@ -378,13 +461,14 @@
         .tag {
             display: inline-block;
             padding: 0.15rem 0.5rem;
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: var(--amber);
+            background: rgba(0, 180, 216, 0.10);
+            border: 1px solid rgba(0, 180, 216, 0.30);
+            color: var(--turquoise);
             font-family: var(--font-mono);
             font-size: 0.7rem;
             margin-right: 0.5rem;
             margin-bottom: 0.5rem;
+            border-radius: 2px;
         }
 
         .tag.verified {
@@ -406,7 +490,7 @@
             top: 0;
             bottom: 0;
             width: 2px;
-            background: linear-gradient(180deg, var(--amber), var(--emerald), var(--cyan));
+            background: linear-gradient(180deg, var(--turquoise), var(--turquoise-2), var(--emerald));
         }
 
         .step {
@@ -432,8 +516,8 @@
             top: 0;
             width: 1.5rem;
             height: 1.5rem;
-            background: var(--panel);
-            border: 2px solid var(--amber);
+            background: var(--glass-bg);
+            border: 2px solid var(--turquoise);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -441,7 +525,8 @@
             font-family: var(--font-mono);
             font-size: 0.7rem;
             font-weight: bold;
-            color: var(--amber);
+            color: var(--turquoise);
+            box-shadow: 0 0 10px rgba(0,180,216,0.4);
         }
 
         .step-title {
@@ -532,13 +617,13 @@
         .data-table th {
             text-align: left;
             padding: 1rem;
-            background: var(--panel);
-            border-bottom: 2px solid var(--amber);
+            background: rgba(0, 30, 60, 0.6);
+            border-bottom: 2px solid var(--turquoise);
             font-family: var(--font-mono);
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--amber);
+            color: var(--turquoise);
         }
 
         .data-table td {
@@ -572,9 +657,10 @@
             font-family: var(--font-mono);
             font-size: 2rem;
             font-weight: 700;
-            color: var(--amber);
+            color: var(--turquoise);
             line-height: 1;
             margin-bottom: 0.5rem;
+            text-shadow: 0 0 16px rgba(0,180,216,0.5);
         }
 
         .metric-label {
@@ -641,7 +727,7 @@
         }
 
         .layer-title {
-            color: var(--amber);
+            color: var(--turquoise);
             font-family: var(--font-mono);
             font-size: 0.8rem;
             text-transform: uppercase;
@@ -681,11 +767,14 @@
             right: 24px;
             bottom: 24px;
             max-width: 420px;
-            background: rgba(15, 15, 17, 0.96);
-            border: 1px solid var(--border);
-            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-bright);
+            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55), 0 0 20px rgba(0,180,216,0.10);
             padding: 1rem;
             z-index: 1000;
+            border-radius: 8px;
         }
 
         .consent-banner p {
@@ -758,8 +847,8 @@
         .field-select:focus,
         .field-textarea:focus {
             outline: none;
-            border-color: var(--amber);
-            box-shadow: 0 0 0 3px var(--amber-glow);
+            border-color: var(--turquoise);
+            box-shadow: 0 0 0 3px var(--turquoise-glow);
         }
 
         .sr-only {
@@ -802,7 +891,7 @@
 
         .signal-item strong {
             display: block;
-            color: var(--amber);
+            color: var(--turquoise);
             margin-bottom: 0.35rem;
             font-family: var(--font-mono);
             font-size: 0.78rem;
@@ -845,18 +934,42 @@
 </head>
 <body>
     <div class="scanline"></div>
+    <canvas id="neural-canvas" aria-hidden="true"></canvas>
 
     <header>
         <div class="container header-grid">
             <div class="brand">
-                <h1>ARCHITECTO EVOLUTIVO v3.0</h1>
-                <div class="subtitle">Sistema de Ingeniería de Prompts Multipropósito</div>
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+                    <svg width="38" height="38" viewBox="0 0 32 32" aria-hidden="true">
+                        <defs><linearGradient id="hx-g" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#00B4D8"/>
+                            <stop offset="1" stop-color="#0077b6"/>
+                        </linearGradient></defs>
+                        <polygon points="16,2 28,9 28,23 16,30 4,23 4,9" fill="url(#hx-g)" opacity="0.9"/>
+                        <polygon points="16,2 28,9 28,23 16,30 4,23 4,9" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>
+                        <text x="16" y="22" text-anchor="middle" font-family="monospace" font-weight="900" font-size="12" fill="#fff">HX</text>
+                    </svg>
+                    <h1>HEXA-DATA PROMPT</h1>
+                </div>
+                <div class="subtitle">&#9679; Sistema Inteligente de Prompts 2026 &nbsp;|&nbsp; Protocolo 6 Pasos &nbsp;|&nbsp; Alta Fidelidad Predictiva</div>
+                <div style="margin-top:8px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+                    <a href="https://github.com/grouphexadata/cloud" target="_blank" rel="noopener noreferrer"
+                       style="color:var(--turquoise-2);font-family:var(--font-mono);font-size:0.72rem;text-decoration:none;display:flex;align-items:center;gap:5px;border:1px solid rgba(0,180,216,0.25);padding:3px 8px;border-radius:4px;transition:all 0.2s;"
+                       onmouseover="this.style.background='rgba(0,180,216,0.10)'" onmouseout="this.style.background='transparent'">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.66-.22.66-.48v-1.69c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.8c.85 0 1.71.11 2.51.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10.01 10.01 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
+                        grouphexadata/cloud
+                    </a>
+                    <a href="index.html" style="color:var(--silver);font-family:var(--font-mono);font-size:0.72rem;text-decoration:none;border:1px solid rgba(192,197,206,0.2);padding:3px 8px;border-radius:4px;transition:all 0.2s;"
+                       onmouseover="this.style.background='rgba(192,197,206,0.08)'" onmouseout="this.style.background='transparent'">
+                        &#8592; HEXA-DATA CLOUD
+                    </a>
+                </div>
             </div>
             <div class="validation-stamp">
                 <div class="stamp-badge">Validado Abril 2026</div>
-                <div class="date-trail">TRAZABILIDAD: AE-2026-04-19-V3</div>
+                <div class="date-trail">TRAZABILIDAD: HD-2026-04-V3</div>
                 <div class="date-trail" style="font-size: 0.65rem; margin-top: 0.25rem;">
-                    FIRMA DIGITAL: <span style="color: var(--emerald);">VERIFICADA</span>
+                    FIRMA: <span style="color: var(--turquoise);">VERIFICADA &#10003;</span>
                 </div>
             </div>
         </div>
@@ -883,7 +996,7 @@
             
             <div class="alert">
                 <strong>MODO AUTOMATIZADO:</strong> Pega tus ideas en bruto (texto libre, notas sueltas, frases incompletas). 
-                El sistema aplicará el Protocolo del Architecto para estructurar, validar y entregar un output accionable.
+                El sistema aplicará el Protocolo HEXA-DATA para estructurar, validar y entregar un output accionable.
             </div>
 
             <div class="processor-grid">
@@ -895,7 +1008,7 @@
                     <textarea id="rawInput" placeholder="Ejemplo: Tengo una idea de app para sostenibilidad, presupuesto 5k, quiero llegar a startups tech, no sé por dónde empezar, necesito validar el mercado antes de gastar..."></textarea>
                     <div style="display: flex; gap: 0.75rem;">
                         <button class="btn" onclick="processIdeas()">
-                            <span>⚡</span> Estructurar con Architecto
+                            <span>⚡</span> Estructurar con HEXA-DATA
                         </button>
                         <button class="btn btn-secondary" onclick="clearAll()">Limpiar</button>
                     </div>
@@ -1195,7 +1308,7 @@ Organiza la respuesta así (adapta según tipo de salida):
                         <tr>
                             <th>Aspecto</th>
                             <th>Prompt Original</th>
-                            <th>Architecto v3.0</th>
+                            <th>HEXA-DATA PROMPT</th>
                             <th>Beneficio Clave</th>
                         </tr>
                     </thead>
@@ -1534,7 +1647,7 @@ CHANGELOG.md</pre>
 
                 <div style="background: var(--void); border: 1px solid var(--border); padding: 1.5rem; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.8;">
 <div style="color: var(--text-dim);"># STACK TECNOLÓGICO SUGERIDO</div>
-<div><span style="color: var(--rose);">orquestador:</span> <span style="color: var(--emerald);">"Architecto Evolutivo v3.0"</span> (meta-prompt)</div>
+<div><span style="color: var(--rose);">orquestador:</span> <span style="color: var(--turquoise);">&quot;HEXA-DATA PROMPT v3.0&quot;</span> (meta-prompt)</div>
 <div><span style="color: var(--rose);">modelo_local:</span> <span style="color: var(--emerald);">"Llama-3-70B / Qwen2.5-72B / Mistral-Large"</span></div>
 <div><span style="color: var(--rose);">verificacion_web:</span> <span style="color: var(--emerald);">"BrightData SERP API + Scraping propio"</span></div>
 <div><span style="color: var(--rose);">almacenamiento:</span> <span style="color: var(--emerald);">"Vector DB (Chroma/Pinecone) para RAG"</span></div>
@@ -1597,10 +1710,10 @@ CHANGELOG.md</pre>
     <footer>
         <div class="container">
             <div style="margin-bottom: 0.5rem;">
-                ARCHITECTO EVOLUTIVO v3.0 | ABRIL 2026
+                HEXA-DATA PROMPT | ABRIL 2026 | Francisco Caballero
             </div>
             <div style="font-size: 0.7rem; color: var(--text-dim);">
-                TRAZABILIDAD: AE-2026-04-19-V3 | VALIDACIÓN COMPLETA | SEGURIDAD VERIFICADA
+                TRAZABILIDAD: HD-2026-04-V3 | VALIDACIÓN COMPLETA | SEGURIDAD VERIFICADA
             </div>
             <div style="margin-top: 1rem; font-size: 0.7rem;">
                 ✓ RESPUESTA COMPLETA Y VERIFICADA
@@ -1967,7 +2080,7 @@ CHANGELOG.md</pre>
             }
 
             // Reset status
-            output.innerHTML = '<div style="text-align: center; padding-top: 3rem;"><div class="typing" style="color: var(--amber); font-family: var(--font-mono);">Iniciando Protocolo Architecto...</div></div>';
+            output.innerHTML = '<div style="text-align: center; padding-top: 3rem;"><div class="typing" style="color: var(--turquoise); font-family: var(--font-mono);">Iniciando Protocolo HEXA-DATA...</div></div>';
             
             // Simulate processing steps
             setTimeout(() => {
@@ -2150,6 +2263,110 @@ CHANGELOG.md</pre>
 
         setOutputPlaceholder();
         initializeTelemetry();
+
+        // ─── Neural Network Background Animation ──────────────────────────
+        (function initNeuralCanvas() {
+            const canvas = document.getElementById('neural-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let W, H, nodes, raf;
+
+            function resize() {
+                W = canvas.width = window.innerWidth;
+                H = canvas.height = window.innerHeight;
+            }
+
+            function makeNode() {
+                return {
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    vx: (Math.random() - 0.5) * 0.45,
+                    vy: (Math.random() - 0.5) * 0.45,
+                    r: Math.random() * 2.2 + 1.2,
+                    pulse: Math.random() * Math.PI * 2
+                };
+            }
+
+            function init() {
+                const count = Math.min(70, Math.floor((W * H) / 14000));
+                nodes = Array.from({ length: count }, makeNode);
+            }
+
+            const DIST = 155;
+            const COLORS = {
+                node: 'rgba(0, 180, 216, ',
+                nodeBright: 'rgba(123, 211, 234, ',
+                edge: 'rgba(0, 140, 180, '
+            };
+
+            function draw() {
+                ctx.clearRect(0, 0, W, H);
+                const t = Date.now() * 0.0008;
+
+                // Edges
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const dx = nodes[i].x - nodes[j].x;
+                        const dy = nodes[i].y - nodes[j].y;
+                        const d = Math.sqrt(dx * dx + dy * dy);
+                        if (d < DIST) {
+                            const alpha = (1 - d / DIST) * 0.35;
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            ctx.strokeStyle = COLORS.edge + alpha + ')';
+                            ctx.lineWidth = (1 - d / DIST) * 1.2;
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // Nodes
+                nodes.forEach(n => {
+                    const pulse = (Math.sin(t * 1.5 + n.pulse) + 1) * 0.5;
+                    const r = n.r + pulse * 1.5;
+                    const alpha = 0.45 + pulse * 0.45;
+
+                    // Glow
+                    const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, r * 4);
+                    grd.addColorStop(0, COLORS.nodeBright + (alpha * 0.6) + ')');
+                    grd.addColorStop(1, 'rgba(0,0,0,0)');
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, r * 4, 0, Math.PI * 2);
+                    ctx.fillStyle = grd;
+                    ctx.fill();
+
+                    // Core dot
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+                    ctx.fillStyle = COLORS.node + alpha + ')';
+                    ctx.fill();
+
+                    // Move
+                    n.x += n.vx;
+                    n.y += n.vy;
+                    if (n.x < 0 || n.x > W) n.vx *= -1;
+                    if (n.y < 0 || n.y > H) n.vy *= -1;
+                });
+
+                raf = requestAnimationFrame(draw);
+            }
+
+            // Respect reduced-motion preference
+            const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+            if (!mq.matches) {
+                resize();
+                init();
+                draw();
+            }
+
+            window.addEventListener('resize', () => {
+                cancelAnimationFrame(raf);
+                resize();
+                init();
+                draw();
+            });
+        })();
     </script>
 </body>
 </html>
