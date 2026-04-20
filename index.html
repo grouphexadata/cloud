@@ -687,18 +687,19 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 5px 11px;
+      padding: 5px 12px;
       border-radius: 6px;
-      border: 1px solid var(--line-bright);
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.28);
+      background: rgba(0, 180, 216, 0.08);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      color: #c8dff0;
       font-size: 0.75rem;
       font-weight: 600;
       text-decoration: none;
       cursor: pointer;
       font-family: var(--sans);
-      transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+      transition: border-color 0.2s, color 0.2s, background 0.2s, box-shadow 0.2s;
     }
 
     .share-btn:hover {
