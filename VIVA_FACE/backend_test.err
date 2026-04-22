@@ -1,0 +1,11 @@
+INFO:     Started server process [44800]
+INFO:     Waiting for application startup.
+2026-04-19 03:02:03.513 | INFO     | app.main:lifespan:34 - === VIVA_FACE_LAB arrancando ===
+2026-04-19 03:02:03.529 | INFO     | app.main:lifespan:39 - \u2705 Base de datos SQLite lista.
+2026-04-19 03:02:03.532 | WARNING  | app.core.face_engine:<module>:18 - InsightFace no disponible. Instala el .whl desde GitHub Releases.
+2026-04-19 03:02:03.533 | ERROR    | app.main:lifespan:53 - \u274c FaceEngine error: InsightFace no está instalado. Descarga el .whl desde https://github.com/Gourieff/InsightFace-REST/releases e instálalo con: pip install insightface-0.7.3-cp311-cp311-win_amd64.whl
+2026-04-19 03:02:03.535 | WARNING  | app.core.vector_store:<module>:18 - FAISS no disponible. Instala con: conda install -c conda-forge faiss-gpu
+2026-04-19 03:02:03.537 | ERROR    | app.main:lifespan:63 - \u274c VectorStore error: FAISS no está instalado. Ejecuta: conda install -c conda-forge faiss-gpu=1.7.4 cudatoolkit=11.8
+2026-04-19 03:02:03.538 | INFO     | app.main:lifespan:65 - === API lista en http://localhost:7892/docs ===
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8010 (Press CTRL+C to quit)
