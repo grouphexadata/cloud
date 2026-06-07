@@ -1,0 +1,28 @@
+name: CPU Monitor Alert
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  check-backend-cpu:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check backend CPU usage
+        shell: pwsh
+        run: |
+          $procs = Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -match 'python' -and ($_.CommandLine -like '*uvicorn*' -or $_.CommandLine -like '*backend.app.main*') }
+          if (-not $procs) {
+            Write-Host "No se detectó proceso uvicorn/python"
+            exit 0
+          }
+          $cpu = ($procs | Measure-Object CPU -Sum).Sum
+          Write-Host "Backend CPU total: $cpu%"
+          if ($cpu -gt 100) {
+            Write-Host "::warning::Backend CPU crítico: $cpu%"
+          }
